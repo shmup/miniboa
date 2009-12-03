@@ -131,7 +131,7 @@ if __name__ == '__main__':
     ## and one to call with lost connections.
 
     telnet_server = TelnetServer(
-        port=6666,
+        port=7777,
         address='',
         on_connect=on_connect,
         on_disconnect=on_disconnect
