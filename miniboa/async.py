@@ -30,6 +30,19 @@ else:
     MAX_CONNECTIONS = 1000
 
 
+#-----------------------------------------------------Dummy Connection Handlers
+
+def _on_connect(client):
+    """Placeholder new connection handler."""
+    print "++ Opened connection to %s, sending greeting..." % client.addrport()
+    client.send("Greetings from Miniboa! "
+        " Now it's time to add your code.\r\n")
+
+def _on_disconnect(client):
+    """Placeholder lost connection handler."""
+    print "-- Lost connection to %s" % client.addrport()
+
+
 #-----------------------------------------------------------------Telnet Server
 
 class TelnetServer(object):
@@ -38,7 +51,8 @@ class TelnetServer(object):
     Poll sockets for new connections and sending/receiving data from clients.
     """
 
-    def __init__(self, port, address='', on_connect=None, on_disconnect=None):
+    def __init__(self, port=7777, address='', on_connect=_on_connect,
+            on_disconnect=_on_disconnect):
         """
         Create a new Telnet Server.
 
@@ -60,6 +74,18 @@ class TelnetServer(object):
         ## Socket Setup
         self.port = port
         self.address = address
+
+#        ## Connection Handlers
+#        if on_connect == None:
+#            self.on_connect = on_connect
+#        else:
+#            self.on_connect = self._on_connect
+
+#        if on_disconnect != None:
+#            self.on_disconnect = on_disconnect
+#        else:
+#            self.on_disconnect = self._on_disconnect
+
         ## Function to call with new Telnet sessions
         self.on_connect = on_connect
         ## Function to call when existing connections are lost

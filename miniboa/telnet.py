@@ -122,7 +122,7 @@ class Telnet(object):
         self.active = True          # Turns False when the connection is lost
         self.sock = sock            # The connection's socket
         self.fileno = sock.fileno() # The socket's file descriptor
-        self.addr = addr_tup[0]     # The client's remote TCP/IP address
+        self.address = addr_tup[0]  # The client's remote TCP/IP address
         self.port = addr_tup[1]     # The client's remote port
         self.terminal_type = 'unknown client' # set via request_terminal_type()
         #self.use_ansi = True
@@ -186,7 +186,7 @@ class Telnet(object):
         Return the DE's IP address and port number as a string.
         """
 
-        return "%s:%s" % (self.addr, self.port)
+        return "%s:%s" % (self.address, self.port)
 
 
     #----------------------------------------------------------------------Idle
