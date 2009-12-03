@@ -1,0 +1,45 @@
+#Project Documentation
+
+= Introduction =
+
+Miniboa is a couple files of Python code that provide a bare-bones Telnet server to use as the base for MUD or similar interactive server.  Miniboa has a couple of nice features for this type of application.
+
+  * Asynchronous - no waiting on player input or state. 
+  * An external game loop - you decide when to poll for data.   
+  * Single threaded - simplifies game design and provides excellent speed.  
+  * 
+
+= Telnet Server =
+
+Creating a Telnet Server is pretty simple.  In fact, you can run with the following three lines of code:
+
+{{{
+from miniboa.async import TelnetServer
+server = TelnetServer()
+while True: server.poll()
+}}}
+
+This will launch a server listening on the default port, 7777, that accepts Telnet connections and sends a simple greeting;
+{{{
+$ telnet localhost 7777
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Greetings from Miniboa!  Now it's time to add your code.
+}}}
+
+
+= Telnet Client Objects =
+
+
+
+
+= License =
+
+Copyright 2009 Jim Storch.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. 
