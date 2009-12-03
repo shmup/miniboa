@@ -12,7 +12,7 @@ Miniboa is a couple files of Python code that provide a bare-bones Telnet server
 
 = Telnet Server =
 
-Creating a Telnet Server is pretty simple.  In fact, you can run one with the following three lines of code:
+Telnet servers are instances of the TelnetServer class from miniboa.async.  Creating a Telnet Server is pretty simple.  In fact, you can run one with the following three lines of code:
 
 {{{
 from miniboa.async import TelnetServer
@@ -35,40 +35,45 @@ Initialization arguments for TelnetServer are;
 server = TelnetServer(port=8888, address='127.0.0.1', on_connect=my_connect_handler, on_disconnect=my_disconnect_handler)
 }}} 
 
-  * port - the network port you want the server to listen for new connections on.  You should be aware that on Linux, port numbers 1024 and below are restricted for use by normal users.  The default is port 7777.
-
-  * address - this is the address of the _local network interface_ you wish the server to listen on.  You can usually omit this parameter (or pass an empty string; '') which causes it to listen on any viable NIC.  Unless your server is directly connected to the Internet (doubtful today) do not set this to the Internet IP address of your server.  The default is an empty string.  
-
-  * on_connect - this is the handler function that is called by the server when a new connection is made.  It will be passed the client object of the new user.  The default is a dummy function that greets the visitor and prints their connection info to stdout. 
-
-  * on_disconnect - this is the hander function that is called by the server when connection is lost.  It will be passed the client object of the lost user.  The default is a dummy function that prints the lost connection info to stdout.
+  * *port* - the network port you want the server to listen for new connections on.  You should be aware that on Linux, port numbers 1024 and below are restricted for use by normal users.  The default is port 7777.
+  * *address* - this is the address of the _local network interface_ you wish the server to listen on.  You can usually omit this parameter (or pass an empty string; '') which causes it to listen on any viable NIC.  Unless your server is directly connected to the Internet (doubtful today) do not set this to the Internet IP address of your server.  The default is an empty string.  
+  * *on_connect* - this is the handler function that is called by the server when a new connection is made.  It will be passed the client object of the new user.  The default is a dummy function that greets the visitor and prints their connection info to stdout. 
+  * *on_disconnect* - this is the hander function that is called by the server when connection is lost.  It will be passed the client object of the lost user.  The default is a dummy function that prints the lost connection info to stdout.
 
 
 == Telnet Server Properties ==
 
 The follow properties can be read from.  Writing to them will either do nothing or crash the server.
 
-  * port - port the server is listening to. 
-  * address - address of the local network interface the server is listening to.  See the explanation of this parameter above.
-  * server_socket - the socket object (from Python's socket module) the server is using.
-  * socket_fd - the file descriptor of the server_socket.
-  * connections - a dictionary of active connections where the key is the connection socket's file descriptor and the value is the client object.  Try not to mess with this.
+  * *port* - port the server is listening to. 
+  * *address* - address of the local network interface the server is listening to.  See the explanation of this parameter above.
+  * *server_socket* - the socket object (from Python's socket module) the server is using.
+  * *socket_fd* - the file descriptor of the server_socket.
+  * *connections* - a dictionary of active connections where the key is the connection socket's file descriptor and the value is the client object.  Try not to mess with this.
 
 You can set or change these after creating the server: 
 
-  * on_connect - handler function for new connections.
-  * on_disconnect - handler function for lost connections.
+  * *on_connect* - handler function for new connections.
+  * *on_disconnect* - handler function for lost connections.
 
 
 == Telnet Server Methods ==
 
-  * poll() - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.         
-
- * connection_count() - returns the current number of connections.
+  * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.         
+ * *connection_count()* - returns the current number of connections.
 
 = Client Objects =
 
+Client objects are instances of the Telnet class from miniboa.telnet.  This is a mixture of a state machine, send/revr buffers, and a few other convenience methods.  They are created when a new connection is detected by the TelnetServer and passed to your on_connect and on_disconnect handler functions.  Your application will probably maintain a list (or some other kind of reference) to these clients so it's important to delete references in your on_disconnect handler or else dead ones will not get garbage collected.
 
+
+== Client Object Properties ==
+
+  * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to disconnect the user.  Note the   
+  * *cmd_ready* - this is set to True when the user enters some text and presses the enter key.  The line of text can be obtained by calling the *get_command()* method.
+  * *bytes_sent* - number of bytes sent to the client since the session began.
+  * *bytes_received* - number of bytes received from the client since the session began.
+   
 
 
 = License =
