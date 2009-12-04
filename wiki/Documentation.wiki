@@ -66,7 +66,7 @@ You can set or change these after creating the server:
  * *connection_count()* - returns the current number of connections.
 
 
-= Telnet Client Objects =
+= Telnet Clients =
 
 Client objects are instances of the TelnetClient class from miniboa.telnet.  This is a mixture of a state machine, send/revr buffers, and a few other convenience methods.  They are created when a new connection is detected by the TelnetServer and passed to your on_connect and on_disconnect handler functions.  Your application will probably maintain a list (or some other kind of reference) to these clients so it's important to delete references in your on_disconnect handler or else dead ones will not get garbage collected.
 
