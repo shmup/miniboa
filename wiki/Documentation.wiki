@@ -70,6 +70,7 @@ You can set or change these after creating the server:
 
 Client objects are instances of the TelnetClient class from miniboa.telnet.  This is a mixture of a state machine, send/revr buffers, and a few other convenience methods.  They are created when a new connection is detected by the TelnetServer and passed to your on_connect and on_disconnect handler functions.  Your application will probably maintain a list (or some other kind of reference) to these clients so it's important to delete references in your on_disconnect handler or else dead ones will not get garbage collected.
 
+The client buffers user's input and break it into lines of text that can be retrieved using the *get_command()* method.
 
 == Client Properties ==
 
