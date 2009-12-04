@@ -100,6 +100,15 @@ class TelnetServer(object):
 
         return len(self.connections)
 
+    def client_list(self):
+
+        """
+        Returns a list of connected clients.
+        """
+
+        return self.connections.values()
+
+
     def poll(self):
 
         """

@@ -13,7 +13,7 @@
 #------------------------------------------------------------------------------
 
 """
-Example of using an on_connect handler.
+Example of using on_connect and on_disconnect handlers.
 """
 
 from miniboa.async import TelnetServer
@@ -36,6 +36,7 @@ def my_on_connect(client):
 def my_on_disconnect(client):
     """Example on_disconnect handler."""
     CLIENTS.remove(client)
+
 
 server = TelnetServer()
 server.on_connect=my_on_connect
