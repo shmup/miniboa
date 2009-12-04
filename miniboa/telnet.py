@@ -107,7 +107,7 @@ class TelnetOption(object):
 
 #------------------------------------------------------------------------Telnet
 
-class Telnet(object):
+class TelnetClient(object):
 
     """
     Represents a client connection via Telnet.
