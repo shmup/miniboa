@@ -73,7 +73,7 @@ Client objects are instances of the TelnetClient class from miniboa.telnet.  Thi
 
 == Client Properties ==
 
-  * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to drop the user.   
+  * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to drop the user (and then call your on_disconnect() function with that client).   
   * *cmd_ready* - this is set to True whenever the user enters some text and then presses the enter key.  The line of text can be obtained by calling the *get_command()* method.
   * *bytes_sent* - number of bytes sent to the client since the session began.
   * *bytes_received* - number of bytes received from the client since the session began.
@@ -86,8 +86,19 @@ Client objects are instances of the TelnetClient class from miniboa.telnet.  Thi
 
 == Client Methods ==
 
-  * *send("Hi there\r\n')* - add the given text to the client's send buffer (processed during a server.poll() )   
-  * 
+  * *send()* - append the given text to the client's send buffer which is actually transmitted during a TelnetServer.poll() call.  You should end   
+  * *get_command()* - returns a line of user input or None.  You can also check the property client.cmd_ready to see if input is available.
+  * *addrport* - returns the client's IP address and port number in the format '127.0.0.1:12345'.
+  * *idle()* - returns the number of seconds since the user last typed.
+  * *duration()* - returns the number of seconds since the user first connected.
+  * *password_mode_on()* - tells the user's client not to locally echo keystrokes.  It seems that Microsoft's telnet.exe is broken in that you cannot resume local echoing once turned off.    
+  * *password_mode_off()* - tells the user's client resume local echo of keystrokes.
+  * *request_do_sga()* - Request DE to Suppress Go-Ahead.  See RFC 858.
+  * *request_will_echo()* - Tell the DE that we would like to echo their text.  See RFC 857.
+  * *request_wont_echo()* - Tell the DE that we would like to stop echoing their text. See RFC 857.
+  * *request_naws()* - Request to Negotiate About Window Size.  Results will be stored in the properties client.columns and client.rows.  See RFC 1073.
+  * *request_terminal_type()* - Begins the Telnet negotiations to request the terminal type from the client.  Result will be stored in the property client.terminal_type.  See RFC 779.
+
 
 = License =
 
