@@ -19,7 +19,7 @@ import select
 import time
 import sys
 
-from miniboa.telnet import Telnet
+from miniboa.telnet import TelnetClient
 from miniboa import BogConnectionLost
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
@@ -104,7 +104,7 @@ class TelnetServer(object):
         self.server_fd = server_socket.fileno()
 
         ## Dictionary of active connections,
-        ## key = file descriptor, value = Telnet Clients (see miniboa.telnet)
+        ## key = file descriptor, value = TelnetClient (see miniboa.telnet)
         self.connections = {}
 
     def connection_count(self):
@@ -172,7 +172,7 @@ class TelnetServer(object):
                     sock.close()
                     continue
 
-                client = Telnet(sock, addr_tup)
+                client = TelnetClient(sock, addr_tup)
                 #print "++ Opened connection to %s" % client.addrport()
                 ## Add the connection to our dictionary
                 self.connections[client.fileno] = client
