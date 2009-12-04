@@ -46,13 +46,10 @@ server = TelnetServer(port=8888, address='127.0.0.1', on_connect=my_connect_hand
 
 == Telnet Server Properties ==
 
-The follow properties can be read from.  Writing to them will either do nothing or crash the server.
+The follow properties can be read from.  
 
   * *port* - port the server is listening to. 
   * *address* - address of the local network interface the server is listening to.  See the explanation of this parameter above.
-  * *server_socket* - the socket object (from Python's socket module) the server is using.
-  * *socket_fd* - the file descriptor of the server_socket.
-  * *connections* - a dictionary of active connections where the key is the connection socket's file descriptor and the value is the client object.  Try not to mess with this.
 
 You can set or change these after creating the server: 
 
