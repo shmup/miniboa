@@ -59,8 +59,43 @@ You can set or change these after creating the server:
 
 == Telnet Server Methods ==
 
-  * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.        
- * *connection_count()* - returns the current number of connections.
+  * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.
+  * *connection_count()* - returns the current number of connections.
+
+Here's a simple example with custom on_connect and on_disconnect handlers:
+
+{{{
+from miniboa.async import TelnetServer
+
+
+CLIENTS = []
+
+def my_on_connect(client):
+    """Example on_connect handler."""
+    client.send('You connected from %s\r\n' % client.addrport())
+    if CLIENTS:
+        client.send('Also connected are:\r\n')
+        for neighbor in CLIENTS:
+            client.send('%s\r\n' % neighbor.addrport())
+    else:
+        client.send('Sadly, you are alone.\r\n')
+    CLIENTS.append(client)
+
+
+def my_on_disconnect(client):
+    """Example on_disconnect handler."""
+    CLIENTS.remove(client)
+
+server = TelnetServer()
+server.on_connect=my_on_connect
+server.on_disconnect=my_on_disconnect
+
+print "\n\nStarting server on port %d.  CTRL-C to interrupt.\n" % server.port
+while True:
+    server.poll()
+}}}
+
+
 
 
 = Telnet Clients =
