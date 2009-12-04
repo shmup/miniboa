@@ -69,11 +69,15 @@ Client objects are instances of the Telnet class from miniboa.telnet.  This is a
 
 == Client Object Properties ==
 
-  * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to disconnect the user.  Note the   
-  * *cmd_ready* - this is set to True when the user enters some text and presses the enter key.  The line of text can be obtained by calling the *get_command()* method.
+  * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to drop the user.   
+  * *cmd_ready* - this is set to True whenever the user enters some text and then presses the enter key.  The line of text can be obtained by calling the *get_command()* method.
   * *bytes_sent* - number of bytes sent to the client since the session began.
   * *bytes_received* - number of bytes received from the client since the session began.
-   
+  * *columns* - Number of columns the client's window supports.  This is set to a default of 80 and then modified if *request_naws()* is called AND the player's client supports NAWS (Negotiate about Window Size). See RFC 1073.
+  * *rows* - number of rows the client's window supports.  This is set to a default of 24 and then modified if *request_naws()* is called AND the player's client supports NAWS (Negotiate about Window Size). See RFC 1073.
+  * *address* - the client's remote IP address.
+  * *port* - the client's port number.
+  * *terminal_type* - the client's terminal type.  Defaults to 'unknown terminal' and changed if *request_terminal_type()* is called AND the player's client supports this IAC.  See RFC 779.  
 
 
 = License =
