@@ -62,12 +62,13 @@ You can set or change these after creating the server:
   * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.         
  * *connection_count()* - returns the current number of connections.
 
-= Client Objects =
+
+= Telnet Client Objects =
 
 Client objects are instances of the Telnet class from miniboa.telnet.  This is a mixture of a state machine, send/revr buffers, and a few other convenience methods.  They are created when a new connection is detected by the TelnetServer and passed to your on_connect and on_disconnect handler functions.  Your application will probably maintain a list (or some other kind of reference) to these clients so it's important to delete references in your on_disconnect handler or else dead ones will not get garbage collected.
 
 
-== Client Object Properties ==
+== Client Properties ==
 
   * *active* - boolean value, True if the client is in good health.  Setting this to False will cause the TelnetServer to drop the user.   
   * *cmd_ready* - this is set to True whenever the user enters some text and then presses the enter key.  The line of text can be obtained by calling the *get_command()* method.
@@ -79,6 +80,11 @@ Client objects are instances of the Telnet class from miniboa.telnet.  This is a
   * *port* - the client's port number.
   * *terminal_type* - the client's terminal type.  Defaults to 'unknown terminal' and changed if *request_terminal_type()* is called AND the player's client supports this IAC.  See RFC 779.  
 
+
+== Client Methods ==
+
+  * *send("Hi there\r\n')* - add the given text to the client's send buffer (processed during a server.poll() )   
+  * 
 
 = License =
 
