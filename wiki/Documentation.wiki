@@ -59,7 +59,7 @@ You can set or change these after creating the server:
 
 == Telnet Server Methods ==
 
-  * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.         
+  * *poll()* - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players.  A call to this method needs to be made from within your program's game loop on a frequent basis.        
  * *connection_count()* - returns the current number of connections.
 
 
