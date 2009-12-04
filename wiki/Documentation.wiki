@@ -86,7 +86,7 @@ Client objects are instances of the TelnetClient class from miniboa.telnet.  Thi
 
 == Client Methods ==
 
-  * *send()* - append the given text to the client's send buffer which is actually transmitted during a TelnetServer.poll() call.  You should end   
+  * *send()* - append the given text to the client's send buffer which is actually transmitted during a TelnetServer.poll() call.  If you intend a line-break, append '\r\n' (carriage return + new line) per Telnet specifications.     
   * *get_command()* - returns a line of user input or None.  You can also check the property client.cmd_ready to see if input is available.
   * *addrport* - returns the client's IP address and port number in the format '127.0.0.1:12345'.
   * *idle()* - returns the number of seconds since the user last typed.
