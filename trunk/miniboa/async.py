@@ -71,24 +71,9 @@ class TelnetServer(object):
             to False.
         """
 
-        ## Socket Setup
         self.port = port
         self.address = address
-
-#        ## Connection Handlers
-#        if on_connect == None:
-#            self.on_connect = on_connect
-#        else:
-#            self.on_connect = self._on_connect
-
-#        if on_disconnect != None:
-#            self.on_disconnect = on_disconnect
-#        else:
-#            self.on_disconnect = self._on_disconnect
-
-        ## Function to call with new Telnet sessions
         self.on_connect = on_connect
-        ## Function to call when existing connections are lost
         self.on_disconnect = on_disconnect
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
