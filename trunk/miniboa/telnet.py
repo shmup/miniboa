@@ -18,6 +18,9 @@ import socket
 import time
 
 from miniboa import BogConnectionLost
+from miniboa.xterm import colorize
+from miniboa.xterm import word_wrap
+
 
 #---[ Telnet Notes ]-----------------------------------------------------------
 # (See RFC 854 for more information)
@@ -125,7 +128,7 @@ class TelnetClient(object):
         self.address = addr_tup[0]  # The client's remote TCP/IP address
         self.port = addr_tup[1]     # The client's remote port
         self.terminal_type = 'unknown client' # set via request_terminal_type()
-        #self.use_ansi = True
+        self.use_ansi = True
         self.columns = 80
         self.rows = 24
         self.send_pending = False
@@ -147,10 +150,10 @@ class TelnetClient(object):
         self.telnet_echo_password = False  # Echo back '*' for passwords?
         self.telnet_sb_buffer = ''  # Buffer for sub-negotiations
 
-    def __del__(self):
+#    def __del__(self):
 
-        #print "Telnet destructor called"
-        pass
+#        print "Telnet destructor called"
+#        pass
 
     #---------------------------------------------------------------Get Command
 
@@ -172,11 +175,49 @@ class TelnetClient(object):
 
     #----------------------------------------------------------------------Send
 
-    def send(self, line):
+    def send(self, text):
 
-        if line:
-            self.send_buffer += line
+        """
+        Send raw text to the distant end.
+        """
+
+        if text:
+            self.send_buffer += text.replace('\n', '\r\n')
             self.send_pending = True
+
+    #-------------------------------------------------------------------Send CC
+
+    def send_cc(self, text):
+    
+        """
+        Send text with caret codes converted to ansi.
+        """
+
+        self.send(colorize(text, self.use_ansi))
+
+    #--------------------------------------------------------------Send Wrapped  
+
+    def send_wrapped(self, text):
+
+        """
+        Send text padded and wrapped to the user's screen width.
+        """        
+
+        lines = word_wrap(text)
+        for line in lines:
+            self.send_cc(text)
+
+    #----------------------------------------------------------------Deactivate
+
+
+    def deactivate(self):
+        
+        """
+        Set the client to disconnect on the next server poll.
+        """
+        
+        self.active = False
+        
 
     #-----------------------------------------------------------------Addr Port
 
