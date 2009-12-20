@@ -66,7 +66,7 @@ def strip_caret_codes(text):
     Strip out any caret codes from a string.
     """
 
-    for token, throwaway in ANSI_CODES:
+    for token, throwaway in _ANSI_CODES:
         text = text.replace(token, '')
     return text
 
