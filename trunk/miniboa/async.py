@@ -52,7 +52,7 @@ class TelnetServer(object):
     """
 
     def __init__(self, port=7777, address='', on_connect=_on_connect,
-            on_disconnect=_on_disconnect):
+            on_disconnect=_on_disconnect, timeout=0.005):
         """
         Create a new Telnet Server.
 
@@ -69,12 +69,16 @@ class TelnetServer(object):
         on_disconnect -- function to call when a client's connection dies,
             either through a terminated session or client.active being set
             to False.
+
+        timeout -- amount of time that Poll() will wait from user inport
+            before returning.  Also frees a slice of CPU time.
         """
 
         self.port = port
         self.address = address
         self.on_connect = on_connect
         self.on_disconnect = on_disconnect
+        self.timeout = timeout
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -142,7 +146,8 @@ class TelnetServer(object):
 
         ## Get active socket file descriptors from select.select()
         try:
-            rlist, slist, elist = select.select(recv_list, send_list, [], 0)
+            rlist, slist, elist = select.select(recv_list, send_list, [],
+                self.timeout)
 
         except select.error, err:
             ## If we can't even use select(), game over man, game over
