@@ -31,10 +31,9 @@ def on_connect(client):
     """
 
     print "++ Opened connection to %s" % client.addrport()
-    broadcast('%s joins the conversation.\r\n' % client.addrport() )
+    broadcast('%s joins the conversation.\n' % client.addrport() )
     CLIENT_LIST.append(client)
-    client.send("Welcome to the Chat Server\r\n")
-
+    client.send("Welcome to the Chat Server, %s.\n" % client.addrport() )
 
 #-------------------------------------------------Sample on_disconnect Function
 
@@ -46,8 +45,7 @@ def on_disconnect(client):
 
     print "-- Lost connection to %s" % client.addrport()
     CLIENT_LIST.remove(client)
-    broadcast('%s leaves the conversation.\r\n' % client.addrport() )
-
+    broadcast('%s leaves the conversation.\n' % client.addrport() )
 
 #----------------------Sample function that tests the idle time of every client
 
@@ -64,7 +62,6 @@ def kick_idle():
             print('-- Kicking idle lobby client from %s' % client.addrport())
             client.active = False
 
-
 #---------------------------------Sample function for checking for client input
 
 def process_clients():
@@ -79,7 +76,6 @@ def process_clients():
             ## If the client sends input echo it to the chat room
             chat(client)
 
-
 #----------------------------------Sample function to send text to every client
 
 def broadcast(msg):
@@ -90,28 +86,28 @@ def broadcast(msg):
     for client in CLIENT_LIST:
         client.send(msg)
 
-
 #Sample function that handles the client commands detected by process_clients()
 
-def chat(speaker):
+def chat(client):
 
     """Echo whatever client types to everyone."""
 
     global SERVER_RUN
-    msg = speaker.get_command()
-    print '%s says, "%s"' % (speaker.addrport(), msg)
-    for client in CLIENT_LIST:
-        if client == speaker:
-            client.send('You say, %s\r\n' % msg)
+    msg = client.get_command()
+    print '%s says, "%s"' % (client.addrport(), msg)
+
+    for guest in CLIENT_LIST:
+        if guest != client:
+            guest.send('%s says, %s\n' % (client.addrport(), msg))
         else:
-            client.send('%s says, %s\r\n' % (speaker.addrport(), msg))
+            guest.send('You say, %s\n' % msg)
 
+    cmd = msg.lower()
     ## bye = disconnect
-    if msg.strip() == 'bye':
+    if cmd == 'bye':
         client.active = False
-
     ## shutdown == stop the server
-    if msg.strip() == 'shutdown':
+    elif cmd == 'shutdown':
         SERVER_RUN = False
 
 
@@ -137,7 +133,8 @@ if __name__ == '__main__':
         on_disconnect=on_disconnect
         )
 
-    print(">> Listening for connections on port %d" % telnet_server.port)
+    print(">> Listening for connections on port %d.  CTRL-C to break."
+        % telnet_server.port)
 
     ## Server Loop
     while SERVER_RUN:
