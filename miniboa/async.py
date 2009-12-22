@@ -86,7 +86,7 @@ class TelnetServer(object):
             sys.exit(1)
 
         self.server_socket = server_socket
-        self.server_fd = server_socket.fileno()
+        self.server_fileno = server_socket.fileno()
 
         ## Dictionary of active clients,
         ## key = file descriptor, value = TelnetClient (see miniboa.telnet)
@@ -121,16 +121,18 @@ class TelnetServer(object):
         #print len(self.connections)
 
         ## Build a list of connections to test for receive data pending
-        recv_list = [self.server_fd]    # always add the server
+        recv_list = [self.server_fileno]    # always add the server
+
         for client in self.clients.values():
-            if client.active:
+            if client.active == True:
                 recv_list.append(client.fileno)
             ## Delete inactive connections from the dictionary
             else:
                 #print "-- Lost connection to %s" % client.addrport()
                 #client.sock.close()
-                del self.clients[client.fileno]
                 self.on_disconnect(client)
+                del self.clients[client.fileno]
+
 
         ## Build a list of connections that need to send data
         send_list = []
@@ -149,11 +151,11 @@ class TelnetServer(object):
             sys.exit(1)
 
         ## Process socket file descriptors with data to recieve
-        for sockfd in rlist:
+        for sock_fileno in rlist:
 
             ## If it's coming from the server's socket then this is a new
             ## connection request.
-            if sockfd == self.server_fd:
+            if sock_fileno == self.server_fileno:
 
                 try:
                     sock, addr_tup = self.server_socket.accept()
@@ -164,28 +166,28 @@ class TelnetServer(object):
                     continue
 
                 ## Check for maximum connections
-                if self.client_count() >= ( MAX_CONNECTIONS ):
+                if self.client_count() >= MAX_CONNECTIONS:
                     print '?? Refusing new connection; maximum in use.'
                     sock.close()
                     continue
 
-                client = TelnetClient(sock, addr_tup)
+                new_client = TelnetClient(sock, addr_tup)
                 #print "++ Opened connection to %s" % client.addrport()
                 ## Add the connection to our dictionary
-                self.clients[client.fileno] = client
+                self.clients[new_client.fileno] = new_client
 
                 ## Whatever we do with new connections goes here:
-                self.on_connect(client)
+                self.on_connect(new_client)
 
             else:
                 ## Call the connection's recieve method
                 try:
-                    self.clients[sockfd].socket_recv()
+                    self.clients[sock_fileno].socket_recv()
                 except BogConnectionLost, ex:
                     #print ex, 'BCE!'
-                    client.active = False
+                    self.clients[sock_fileno].deactivate()
 
         ## Process sockets with data to send
-        for sockfd in slist:
+        for sock_fileno in slist:
             ## Call the connection's send method
-            self.clients[sockfd].socket_send()
+            self.clients[sock_fileno].socket_send()
