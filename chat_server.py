@@ -130,7 +130,8 @@ if __name__ == '__main__':
         port=7777,
         address='',
         on_connect=on_connect,
-        on_disconnect=on_disconnect
+        on_disconnect=on_disconnect,
+        timeout = .05
         )
 
     print(">> Listening for connections on port %d.  CTRL-C to break."
@@ -141,6 +142,5 @@ if __name__ == '__main__':
         telnet_server.poll()        ## Send, Recv, and look for new connections
         kick_idle()                 ## Check for idle clients
         process_clients()           ## Check for client input
-        time.sleep(.01)             ## Give up a sliver of system time
 
     print(">> Server shutdown.")
