@@ -16,7 +16,6 @@
 
 import socket
 import select
-import time
 import sys
 
 from miniboa.telnet import TelnetClient
@@ -85,8 +84,8 @@ class TelnetServer(object):
         try:
             server_socket.bind((address, port))
             server_socket.listen(5)
-        except socket.error, e:
-            print >>sys.stderr, "Unable to create the server socket:", e
+        except socket.error, err:
+            print >> sys.stderr, "Unable to create the server socket:", err
             sys.exit(1)
 
         self.server_socket = server_socket
@@ -128,7 +127,7 @@ class TelnetServer(object):
         recv_list = [self.server_fileno]    # always add the server
 
         for client in self.clients.values():
-            if client.active == True:
+            if client.active:
                 recv_list.append(client.fileno)
             ## Delete inactive connections from the dictionary
             else:
@@ -151,7 +150,7 @@ class TelnetServer(object):
 
         except select.error, err:
             ## If we can't even use select(), game over man, game over
-            print >>sys.stderr, ("!! FATAL SELECT error '%d:%s'!"
+            print >> sys.stderr, ("!! FATAL SELECT error '%d:%s'!"
                 % (err[0], err[1]))
             sys.exit(1)
 
@@ -166,7 +165,7 @@ class TelnetServer(object):
                     sock, addr_tup = self.server_socket.accept()
 
                 except socket.error, err:
-                    print >>sys.stderr, ("!! ACCEPT error '%d:%s'." %
+                    print >> sys.stderr, ("!! ACCEPT error '%d:%s'." %
                         (err[0], err[1]))
                     continue
 
@@ -188,8 +187,8 @@ class TelnetServer(object):
                 ## Call the connection's recieve method
                 try:
                     self.clients[sock_fileno].socket_recv()
-                except BogConnectionLost, ex:
-                    #print ex, 'BCE!'
+                except BogConnectionLost, err:
+                    #print error, 'BCE!'
                     self.clients[sock_fileno].deactivate()
 
         ## Process sockets with data to send

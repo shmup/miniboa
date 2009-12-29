@@ -12,9 +12,11 @@
 #   under the License.
 #------------------------------------------------------------------------------
 
-import re
+"""
+Support for color and formatting for Xterm style clients.
+"""
 
-"""Support for color and formatting for Xterm style clients."""
+import re
 
 
 #--[ Caret Code to ANSI TABLE ]------------------------------------------------
@@ -58,46 +60,33 @@ _ANSI_CODES = (
     )
 
 
-#-------------------------------------------------------------Strip Caret Codes
-
 def strip_caret_codes(text):
-
     """
     Strip out any caret codes from a string.
     """
-
     for token, throwaway in _ANSI_CODES:
         text = text.replace(token, '')
     return text
 
 
-#----------------------------------------------------------------------Colorize
-
 def colorize(text, ansi=True):
-
     """
     If the client wants ansi, replace the tokens with ansi sequences --
     otherwise, simply strip them out.
     """
-
     if ansi:
         for token, code in _ANSI_CODES:
             text = text.replace(token, code)
     else:
         text = strip_caret_codes(text)
-
     return text
 
 
-#---------------------------------------------------------------------Word Wrap
-
 def word_wrap(text, columns=78, indent=2, padding=1):
-
     """
     Given a block of text, breaks into a list of lines wrapped to
     length.  Should be a bit more efficient with telnet sending lines.
     """
-
     para_break = re.compile(r"(\n\s*\n)", re.MULTILINE)
     paragraphs = para_break.split(text)
     lines = []
