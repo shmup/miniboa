@@ -12,8 +12,9 @@
 #   under the License.
 #------------------------------------------------------------------------------
 
-import socket
-import time
+"""
+Chat Room Demo for Miniboa.
+"""
 
 from miniboa.async import TelnetServer
 
@@ -25,11 +26,9 @@ SERVER_RUN = True
 #----------------------------------------------------Sample on_connect Function
 
 def on_connect(client):
-
     """
     Function to handle new connections.
     """
-
     print "++ Opened connection to %s" % client.addrport()
     broadcast('%s joins the conversation.\n' % client.addrport() )
     CLIENT_LIST.append(client)
@@ -38,11 +37,9 @@ def on_connect(client):
 #-------------------------------------------------Sample on_disconnect Function
 
 def on_disconnect(client):
-
     """
     Function to handle lost connections.
     """
-
     print "-- Lost connection to %s" % client.addrport()
     CLIENT_LIST.remove(client)
     broadcast('%s leaves the conversation.\n' % client.addrport() )
@@ -50,12 +47,9 @@ def on_disconnect(client):
 #----------------------Sample function that tests the idle time of every client
 
 def kick_idle():
-
     """
     Looks for idle clients and disconnects them by setting active to False.
     """
-
-    global CLIENT_LIST
     ## Who hasn't been typing?
     for client in CLIENT_LIST:
         if client.idle() > IDLE_TIMEOUT:
@@ -65,12 +59,10 @@ def kick_idle():
 #---------------------------------Sample function for checking for client input
 
 def process_clients():
-
     """
     Check each client, if client.cmd_ready == True then there is a line of
     input available via client.get_command().
     """
-
     for client in CLIENT_LIST:
         if client.active and client.cmd_ready:
             ## If the client sends input echo it to the chat room
@@ -79,19 +71,18 @@ def process_clients():
 #----------------------------------Sample function to send text to every client
 
 def broadcast(msg):
-
-    """Send msg to every client."""
-
-    global CLIENT_LIST
+    """
+    Send msg to every client.
+    """
     for client in CLIENT_LIST:
         client.send(msg)
 
 #Sample function that handles the client commands detected by process_clients()
 
 def chat(client):
-
-    """Echo whatever client types to everyone."""
-
+    """
+    Echo whatever client types to everyone.
+    """
     global SERVER_RUN
     msg = client.get_command()
     print '%s says, "%s"' % (client.addrport(), msg)
@@ -117,10 +108,8 @@ def chat(client):
 
 if __name__ == '__main__':
 
-    """
-    Simple chat server to demonstrate connection handling via the
-    async and telnet modules.
-    """
+    ## Simple chat server to demonstrate connection handling via the
+    ## async and telnet modules.
 
     ## Create a telnet server with a port, address,
     ## a function to call with new connections
