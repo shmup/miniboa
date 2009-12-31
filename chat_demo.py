@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-#   chat_server.py
+#   chat_demo.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain a
@@ -23,28 +23,26 @@ CLIENT_LIST = []
 SERVER_RUN = True
 
 
-#----------------------------------------------------Sample on_connect Function
-
 def on_connect(client):
     """
-    Function to handle new connections.
+    Sample on_connect function.
+    Handles new connections.
     """
     print "++ Opened connection to %s" % client.addrport()
     broadcast('%s joins the conversation.\n' % client.addrport() )
     CLIENT_LIST.append(client)
     client.send("Welcome to the Chat Server, %s.\n" % client.addrport() )
 
-#-------------------------------------------------Sample on_disconnect Function
 
 def on_disconnect(client):
     """
-    Function to handle lost connections.
+    Sample on_disconnect function.
+    Handles lost connections.
     """
     print "-- Lost connection to %s" % client.addrport()
     CLIENT_LIST.remove(client)
     broadcast('%s leaves the conversation.\n' % client.addrport() )
 
-#----------------------Sample function that tests the idle time of every client
 
 def kick_idle():
     """
@@ -56,7 +54,6 @@ def kick_idle():
             print('-- Kicking idle lobby client from %s' % client.addrport())
             client.active = False
 
-#---------------------------------Sample function for checking for client input
 
 def process_clients():
     """
@@ -68,7 +65,6 @@ def process_clients():
             ## If the client sends input echo it to the chat room
             chat(client)
 
-#----------------------------------Sample function to send text to every client
 
 def broadcast(msg):
     """
@@ -77,7 +73,6 @@ def broadcast(msg):
     for client in CLIENT_LIST:
         client.send(msg)
 
-#Sample function that handles the client commands detected by process_clients()
 
 def chat(client):
     """

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #------------------------------------------------------------------------------
-#   chat_server.py
+#   handler_demo.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain a
@@ -13,14 +13,40 @@
 #------------------------------------------------------------------------------
 
 """
-As simple as it gets.
-Launch the Telnet server on the default port and greet visitors using the
-placeholder 'on_connect()' function.  Does nothing else.
+Example of using on_connect and on_disconnect handlers.
 """
 
 from miniboa.async import TelnetServer
 
+
+CLIENTS = []
+
+
+def my_on_connect(client):
+    """
+    Example on_connect handler.
+    """
+    client.send('You connected from %s\n' % client.addrport())
+    if CLIENTS:
+        client.send('Also connected are:\n')
+        for neighbor in CLIENTS:
+            client.send('%s\n' % neighbor.addrport())
+    else:
+        client.send('Sadly, you are alone.\n')
+    CLIENTS.append(client)
+
+
+def my_on_disconnect(client):
+    """
+    Example on_disconnect handler.
+    """
+    CLIENTS.remove(client)
+
+
 server = TelnetServer()
+server.on_connect=my_on_connect
+server.on_disconnect=my_on_disconnect
+
 print "\n\nStarting server on port %d.  CTRL-C to interrupt.\n" % server.port
 while True:
     server.poll()

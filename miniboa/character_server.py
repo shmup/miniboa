@@ -13,6 +13,10 @@
 #------------------------------------------------------------------------------
 
 """
+****************************************************
+THIS IS EXPERIMENTAL AND PROBABLY DOES NOT WORK YET.
+****************************************************
+
 Handle Asynchronous Telnet Connections.
 """
 
@@ -20,7 +24,7 @@ import socket
 import select
 import sys
 
-from miniboa.telnet import TelnetClient
+from miniboa.character_client import CharModeClient
 from miniboa import BogConnectionLost
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
@@ -50,7 +54,7 @@ def _on_disconnect(client):
 
 #-----------------------------------------------------------------Telnet Server
 
-class TelnetServer(object):
+class CharModeServer(object):
     """
     Poll sockets for new connections and sending/receiving data from clients.
     """
@@ -172,7 +176,7 @@ class TelnetServer(object):
                     sock.close()
                     continue
 
-                new_client = TelnetClient(sock, addr_tup)
+                new_client = CharModeClient(sock, addr_tup)
                 #print "++ Opened connection to %s" % new_client.addrport()
                 ## Add the connection to our dictionary and call handler
                 self.clients[new_client.fileno] = new_client
