@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
-#   miniboa/telnet.py
+#   miniboa/character_client.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain a
@@ -13,7 +13,11 @@
 #------------------------------------------------------------------------------
 
 """
-Manage one Telnet client connected via a TCP/IP socket.
+****************************************************
+THIS IS EXPERIMENTAL AND PROBABLY DOES NOT WORK YET.
+****************************************************
+
+Telnet Character Mode Client.
 """
 
 import socket
@@ -95,6 +99,10 @@ TTYPE   = chr( 24)      # Terminal Type
 NAWS    = chr( 31)      # Negotiate About Window Size
 LINEMO  = chr( 34)      # Line Mode
 
+LM_EDIT = 1             # line mode local edit
+LM_TRAP = 2             # line mode local trap signal
+LM_ACK  = 4             # line mode acknowledge
+LM_SLC  = 3             # line mode set local characters
 
 #-----------------------------------------------------------------Telnet Option
 
@@ -110,7 +118,7 @@ class TelnetOption(object):
 
 #------------------------------------------------------------------------Telnet
 
-class TelnetClient(object):
+class CharModeClient(object):
 
     """
     Represents a client connection via Telnet.
@@ -135,38 +143,46 @@ class TelnetClient(object):
         self.recv_buffer = ''
         self.bytes_sent = 0
         self.bytes_received = 0
-        self.cmd_ready = False
         self.command_list = []
         self.connect_time = time.time()
         self.last_input_time = time.time()
+        self.char_ready = False
+        self.special_key_dict = {}
 
         ## State variables for interpreting incoming telnet commands
         self.telnet_got_iac = False # Are we inside an IAC sequence?
         self.telnet_got_cmd = None  # Did we get a telnet command?
         self.telnet_got_sb = False  # Are we inside a subnegotiation?
         self.telnet_opt_dict = {}   # Mapping for up to 256 TelnetOptions
-        self.telnet_echo = False    # Echo input back to the client?
-        self.telnet_echo_password = False  # Echo back '*' for passwords?
+        self.telnet_echo = False    # Does the client expect an echo from us?
         self.telnet_sb_buffer = ''  # Buffer for sub-negotiations
 
-#    def __del__(self):
+        ## Start requesting character mode
+        #self.request_do_sga()
+        self.request_character_mode()
 
+
+##  For troubleshooting only
+#    def __del__(self):
 #        print "Telnet destructor called"
 #        pass
 
-    def get_command(self):
+
+    def get_char(self):
         """
-        Get a line of text that was received from the DE. The class's
-        cmd_ready attribute will be true if lines are available.
+        If the DE acknowledges a call to the method character_mode_on(),
+        Input can be obtained one character at a time.  The instance's
+        char_ready attribute will be true if a character is available.
         """
-        cmd = None
-        count = len(self.command_list)
-        if count > 0:
-            cmd = self.command_list.pop(0)
-        ## If that was the last line, turn off lines_pending
-        if count == 1:
-            self.cmd_ready = False
-        return cmd
+        count = len(self.recv_buffer)
+        if count:
+            char = self.recv_buffer[0]
+            if count == 1:
+                self.char_ready = False
+            self.recv_buffer = self.recv_buffer[1:]
+            return char
+        else:
+            return None
 
     def send(self, text):
         """
@@ -228,7 +244,6 @@ class TelnetClient(object):
         """
         self._iac_will(ECHO)
         self._note_reply_pending(ECHO, True)
-        self.telnet_echo = True
 
     def request_wont_echo(self):
         """
@@ -237,7 +252,6 @@ class TelnetClient(object):
         """
         self._iac_wont(ECHO)
         self._note_reply_pending(ECHO, True)
-        self.telnet_echo = False
 
     def password_mode_on(self):
         """
@@ -252,6 +266,26 @@ class TelnetClient(object):
         """
         self._iac_wont(ECHO)
         self._note_reply_pending(ECHO, True)
+
+    def request_character_mode(self):
+        """
+        Tell the DE to not locally edit lines and send raw characters.
+        Upon confirmation, input will be routed via get_char().
+        """
+        self.request_will_echo()
+        self._iac_do(LINEMO)
+        self._note_reply_pending(LINEMO, True)
+        self.character_mode = True
+
+#    def character_mode_off(self):
+#        """
+#        Tell the DE to resume locally edit lines.
+#        Upon confirmation, input will be routed via get_command().
+#        """
+#        self.request_wont_echo()
+#        self._iac_do(LINEMO)
+#        self._note_reply_pending(LINEMO, True)
+
 
     def request_naws(self):
         """
@@ -292,14 +326,15 @@ class TelnetClient(object):
         try:
             data = self.sock.recv(2048)
         except socket.error, ex:
-            print ("?? socket.recv() error '%d:%s' from %s" %
+            err_msg = ("Socket.recv() error '%d:%s' from %s" %
                 (ex[0], ex[1], self.addrport()))
-            raise BogConnectionLost()
+            raise BogConnectionLost(err_msg)
 
         ## Did they close the connection?
         size = len(data)
         if size == 0:
-            raise BogConnectionLost()
+            err_msg = 'Connection dropped by %s' % self.addrport()
+            raise BogConnectionLost(err_msg)
 
         ## Update some trackers
         self.last_input_time = time.time()
@@ -309,37 +344,13 @@ class TelnetClient(object):
         for byte in data:
             self._iac_sniffer(byte)
 
-        ## Look for newline characters to get whole lines from the buffer
-        while True:
-            mark = self.recv_buffer.find('\n')
-            if mark == -1:
-                break
-            cmd = self.recv_buffer[:mark].strip()
-            self.command_list.append(cmd)
-            self.cmd_ready = True
-            self.recv_buffer = self.recv_buffer[mark+1:]
-
     def _recv_byte(self, byte):
         """
         Non-printable filtering currently disabled because it did not play
         well with extended character sets.
         """
-        ## Filter out non-printing characters
-        #if (byte >= ' ' and byte <= '~') or byte == '\n':
-        if self.telnet_echo:
-            self._echo_byte(byte)
         self.recv_buffer += byte
-
-    def _echo_byte(self, byte):
-        """
-        Echo a character back to the client and convert LF into CR\LF.
-        """
-        if byte == '\n':
-            self.send_buffer += '\r'
-        if self.telnet_echo_password:
-            self.send_buffer += '*'
-        else:
-            self.send_buffer += byte
+        self.char_ready = True
 
     def _iac_sniffer(self, byte):
         """
@@ -416,7 +427,7 @@ class TelnetClient(object):
         """
         Handle incoming Telnet commands that are two bytes long.
         """
-        #print "got two byte cmd %d" % ord(cmd)
+        print "got two byte cmd %d" % ord(cmd)
 
         if cmd == SB:
             ## Begin capturing a sub-negotiation string
@@ -463,7 +474,7 @@ class TelnetClient(object):
         Handle incoming Telnet commmands that are three bytes long.
         """
         cmd = self.telnet_got_cmd
-        #print "got three byte cmd %d:%d" % (ord(cmd), ord(option))
+        print "got three byte cmd %d:%d" % (ord(cmd), ord(option))
 
         ## Incoming DO's and DONT's refer to the status of this end
 
@@ -576,6 +587,37 @@ class TelnetClient(object):
                     # No no, bad DE!
                     self._iac_dont(ECHO)
 
+
+
+
+            ## see http://www.faqs.org/rfcs/rfc1184.html
+            elif option == LINEMO:
+
+                if self._check_reply_pending(LINEMO):
+                    ## DE is responds that it agrees to negotiate
+                    ## about line mode settings
+                    self._note_reply_pending(LINEMO, False)
+                    self._note_remote_option(LINEMO, True)
+
+                    if self.character_mode is False:
+                        ## If not in character mode, request it
+                        self.send('%c%c%c%c%c%c' %
+                            (IAC, SB, LINEMO, LM_TRAP, IAC, SE))
+
+                    else:
+                        ## Request back to line mode
+                        self.send('%c%c%c%c%c%c' %
+                            (IAC, SB, LINEMO, LM_EDIT|LM_TRAP, IAC, SE))
+
+                elif (self._check_remote_option(LINEMO) is False or
+                        self._check_remote_option(LINEMO) is UNKNOWN):
+                    ## DE asking for a cold negotiation of linemode settings
+                    ## but we're going to refuse.
+                    self._iac_dont(LINEMO)
+
+
+
+
             elif option == NAWS:
 
                 if self._check_reply_pending(NAWS):
@@ -664,7 +706,7 @@ class TelnetClient(object):
                 self.terminal_type = bloc[2:]
                 #print "Terminal type = '%s'" % self.terminal_type
 
-            if bloc[0] == NAWS:
+            elif bloc[0] == NAWS:
                 if len(bloc) != 5:
                     print "Bad length on NAWS SB:", len(bloc)
                 else:
@@ -672,6 +714,12 @@ class TelnetClient(object):
                     self.rows = (256 * ord(bloc[3])) + ord(bloc[4])
 
                 #print "Screen is %d x %d" % (self.columns, self.rows)
+
+            elif bloc[0] == LINEMO:
+                for c in bloc:
+                    print 'ord = ', ord(c)
+                print
+
 
         self.telnet_sb_buffer = ''
 
