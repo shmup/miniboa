@@ -82,7 +82,7 @@ def colorize(text, ansi=True):
     return text
 
 
-def word_wrap(text, columns=78, indent=2, padding=1):
+def word_wrap(text, columns=80, indent=4, padding=2):
     """
     Given a block of text, breaks into a list of lines wrapped to
     length.  Should be a bit more efficient with telnet sending lines.
@@ -90,15 +90,18 @@ def word_wrap(text, columns=78, indent=2, padding=1):
     para_break = re.compile(r"(\n\s*\n)", re.MULTILINE)
     paragraphs = para_break.split(text)
     lines = []
+    columns -= padding
     for para in paragraphs:
         if para.isspace():
             continue
-        line = ' ' * ( padding + indent )
+        line = ' ' * indent
         for word in para.split():
             if (len(line) + 1 + len(word)) > columns:
                 lines.append(line)
                 line = ' ' * padding
-            line += ' ' + word
+                line += word
+            else:
+                line += ' ' + word
         if not line.isspace():
             lines.append(line)
     return lines

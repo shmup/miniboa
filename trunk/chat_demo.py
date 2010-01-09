@@ -16,7 +16,7 @@
 Chat Room Demo for Miniboa.
 """
 
-from miniboa.async import TelnetServer
+from miniboa import TelnetServer
 
 IDLE_TIMEOUT = 300
 CLIENT_LIST = []

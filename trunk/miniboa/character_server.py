@@ -25,7 +25,7 @@ import select
 import sys
 
 from miniboa.character_client import CharModeClient
-from miniboa import BogConnectionLost
+from miniboa.error import BogConnectionLost
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
 if sys.platform == 'win32':

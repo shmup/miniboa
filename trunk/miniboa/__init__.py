@@ -12,10 +12,7 @@
 #   under the License.
 #------------------------------------------------------------------------------
 
-class BogConnectionLost(Exception):
+from miniboa.async import TelnetServer
 
-    """
-    Custom exception to signal a lost connection to the Telnet Server.
-    """
 
-    pass
+

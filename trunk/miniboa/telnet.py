@@ -19,7 +19,7 @@ Manage one Telnet client connected via a TCP/IP socket.
 import socket
 import time
 
-from miniboa import BogConnectionLost
+from miniboa.error import BogConnectionLost
 from miniboa.xterm import colorize
 from miniboa.xterm import word_wrap
 
@@ -186,9 +186,9 @@ class TelnetClient(object):
         """
         Send text padded and wrapped to the user's screen width.
         """
-        lines = word_wrap(text)
+        lines = word_wrap(text, self.columns)
         for line in lines:
-            self.send_cc(line)
+            self.send_cc(line + '\n')
 
     def deactivate(self):
         """
