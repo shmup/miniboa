@@ -16,7 +16,7 @@
 Example of using on_connect and on_disconnect handlers.
 """
 
-from miniboa.async import TelnetServer
+from miniboa import TelnetServer
 
 
 CLIENTS = []

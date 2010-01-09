@@ -23,7 +23,7 @@ Telnet Character Mode Client.
 import socket
 import time
 
-from miniboa import BogConnectionLost
+from miniboa.error import BogConnectionLost
 from miniboa.xterm import colorize
 from miniboa.xterm import word_wrap
 

@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #------------------------------------------------------------------------------
-#   hello_demo.py
+#   miniboa/error.py
 #   Copyright 2009 Jim Storch
 #   Licensed under the Apache License, Version 2.0 (the "License"); you may
 #   not use this file except in compliance with the License. You may obtain a
@@ -12,16 +12,8 @@
 #   under the License.
 #------------------------------------------------------------------------------
 
-"""
-As simple as it gets.
-
-Launch the Telnet server on the default port and greet visitors using the
-placeholder 'on_connect()' function.  Does nothing else.
-"""
-
-from miniboa import TelnetServer
-
-server = TelnetServer()
-print "\n\nStarting server on port %d.  CTRL-C to interrupt.\n" % server.port
-while True:
-    server.poll()
+class BogConnectionLost(Exception):
+    """
+    Custom exception to signal a lost connection to the Telnet Server.
+    """
+    pass
