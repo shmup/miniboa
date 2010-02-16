@@ -2,6 +2,8 @@
 
 = Introduction =
 
+The following ANSI shortcuts are optional and only apply to text transmitted to the client with the *send_cc()* and *send_wrapped()* methods of the *TelnetClient* object.  The *TelnetClient.send()* method does not process them and you can easily implement your own system (or none at all) by using it for all outgoing text.  
+
 In order to make text decorating easier, you can use the following caret codes inside blocks of text.  If the client has turned off color, the tokens are simply stripped out.
 
 You'll notice there is a pattern to the codes which should be easy to remember -- lower case = dark/mode off, uppercase = bright/mode on.  Black is 'k' as in CMYK, since Blue took the 'b'.   
