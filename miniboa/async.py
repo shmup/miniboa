@@ -25,7 +25,7 @@ from miniboa.error import BogConnectionLost
 
 ## Cap sockets to 512 on Windows because winsock can only process 512 at time
 if sys.platform == 'win32':
-    MAX_CONNECTIONS = 512
+    MAX_CONNECTIONS = 500
 ## Cap sockets to 1000 on Linux because you can only have 1024 file descriptors
 else:
     MAX_CONNECTIONS = 1000
