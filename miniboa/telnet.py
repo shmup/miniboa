@@ -6,7 +6,6 @@ import socket
 import time
 import logging
 
-from miniboa.error import ConnectionLost
 from miniboa.xterm import colorize
 from miniboa.xterm import word_wrap
 
@@ -80,6 +79,14 @@ TTYPE   = chr( 24)      # Terminal Type
 NAWS    = chr( 31)      # Negotiate About Window Size
 LINEMO  = chr( 34)      # Line Mode
 
+#-----------------------------------------------------Connection Lost Exception
+
+class ConnectionLost(Exception):
+    """
+    Custom exception to signal a lost connection to the Telnet Server.
+    """
+    pass
+
 #-----------------------------------------------------------------Telnet Option
 
 class TelnetOption(object):
@@ -90,7 +97,6 @@ class TelnetOption(object):
         self.local_option = UNKNOWN     # Local state of an option
         self.remote_option = UNKNOWN    # Remote state of an option
         self.reply_pending = False      # Are we expecting a reply?
-
 
 #------------------------------------------------------------------------Telnet
 
