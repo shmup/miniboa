@@ -16,11 +16,10 @@
 Example of using on_connect and on_disconnect handlers.
 """
 
+import logging
 from miniboa import TelnetServer
 
-
 CLIENTS = []
-
 
 def my_on_connect(client):
     """
@@ -43,10 +42,13 @@ def my_on_disconnect(client):
     CLIENTS.remove(client)
 
 
-server = TelnetServer()
-server.on_connect=my_on_connect
-server.on_disconnect=my_on_disconnect
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
 
-print "\n\nStarting server on port %d.  CTRL-C to interrupt.\n" % server.port
-while True:
-    server.poll()
+    server = TelnetServer()
+    server.on_connect=my_on_connect
+    server.on_disconnect=my_on_disconnect
+
+    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(server.port))
+    while True:
+        server.poll()

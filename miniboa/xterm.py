@@ -64,7 +64,7 @@ def strip_caret_codes(text):
     """
     Strip out any caret codes from a string.
     """
-    ## temporarily escape out ^^
+    # temporarily escape out ^^
     text = text.replace('^^', '\x00')
     for token, foo in _ANSI_CODES:
         text = text.replace(token, '')

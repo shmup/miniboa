@@ -19,17 +19,14 @@ Handle Asynchronous Telnet Connections.
 import socket
 import select
 import sys
+import logging
 
 from miniboa.telnet import TelnetClient
-from miniboa.error import BogConnectionLost
+from miniboa.error import ConnectionLost
 
-## Cap sockets to 512 on Windows because winsock can only process 512 at time
-if sys.platform == 'win32':
-    MAX_CONNECTIONS = 500
-## Cap sockets to 1000 on Linux because you can only have 1024 file descriptors
-else:
-    MAX_CONNECTIONS = 1000
-
+# Cap sockets to 512 on Windows because winsock can only process 512 at time
+# Cap sockets to 1000 on UNIX because you can only have 1024 file descriptors
+MAX_CONNECTIONS = 500 if sys.platform == 'win32' else 1000
 
 #-----------------------------------------------------Dummy Connection Handlers
 
@@ -37,16 +34,14 @@ def _on_connect(client):
     """
     Placeholder new connection handler.
     """
-    print "++ Opened connection to %s, sending greeting..." % client.addrport()
-    client.send("Greetings from Miniboa! "
-        " Now it's time to add your code.\n")
+    logging.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
+    client.send("Greetings from Miniboa-py3!\n")
 
 def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
-    print "-- Lost connection to %s" % client.addrport()
-
+    logging.info ("-- Lost connection to %s".format(client.addrport()))
 
 #-----------------------------------------------------------------Telnet Server
 
@@ -55,7 +50,7 @@ class TelnetServer(object):
     Poll sockets for new connections and sending/receiving data from clients.
     """
     def __init__(self, port=7777, address='', on_connect=_on_connect,
-            on_disconnect=_on_disconnect, timeout=0.005):
+            on_disconnect=_on_disconnect, timeout=0.05):
         """
         Create a new Telnet Server.
 
@@ -73,7 +68,7 @@ class TelnetServer(object):
             either through a terminated session or client.active being set
             to False.
 
-        timeout -- amount of time that Poll() will wait from user inport
+        timeout -- amount of time that Poll() will wait from user input
             before returning.  Also frees a slice of CPU time.
         """
 
@@ -85,18 +80,19 @@ class TelnetServer(object):
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
         try:
             server_socket.bind((address, port))
             server_socket.listen(5)
-        except socket.error, err:
-            print >> sys.stderr, "Unable to create the server socket:", err
-            sys.exit(1)
+        except socket.err as err:
+            logging.critical("Unable to create the server socket: " + str(err))
+            raise
 
         self.server_socket = server_socket
         self.server_fileno = server_socket.fileno()
 
-        ## Dictionary of active clients,
-        ## key = file descriptor, value = TelnetClient (see miniboa.telnet)
+        # Dictionary of active clients,
+        # key = file descriptor, value = TelnetClient (see miniboa.telnet)
         self.clients = {}
 
     def client_count(self):
@@ -119,73 +115,70 @@ class TelnetServer(object):
         read incomming data, and send outgoing data.  Sends and receives may
         be partial.
         """
-        #print len(self.connections)
-        ## Build a list of connections to test for receive data pending
+        # Build a list of connections to test for receive data pending
         recv_list = [self.server_fileno]    # always add the server
+
+        del_list = [] # list of clients to delete after polling
 
         for client in self.clients.values():
             if client.active:
                 recv_list.append(client.fileno)
-            ## Delete inactive connections from the dictionary
             else:
-                #print "-- Lost connection to %s" % client.addrport()
-                #client.sock.close()
                 self.on_disconnect(client)
-                del self.clients[client.fileno]
+                del_list.append(client.fileno)
 
+        # Delete inactive connections from the dictionary
+        for client in del_list:
+            del self.clients[client]
 
-        ## Build a list of connections that need to send data
+        # Build a list of connections that need to send data
         send_list = []
         for client in self.clients.values():
             if client.send_pending:
                 send_list.append(client.fileno)
 
-        ## Get active socket file descriptors from select.select()
+        # Get active socket file descriptors from select.select()
         try:
             rlist, slist, elist = select.select(recv_list, send_list, [],
                 self.timeout)
+        except select.error as err:
+            # If we can't even use select(), game over man, game over
+            logging.critical("SELECT socket error '{}'".format(str(err)))
+            raise
 
-        except select.error, err:
-            ## If we can't even use select(), game over man, game over
-            print >> sys.stderr, ("!! FATAL SELECT error '%d:%s'!"
-                % (err[0], err[1]))
-            sys.exit(1)
-
-        ## Process socket file descriptors with data to recieve
+        # Process socket file descriptors with data to recieve
         for sock_fileno in rlist:
 
-            ## If it's coming from the server's socket then this is a new
-            ## connection request.
+            # If it's coming from the server's socket then this is a new connection request.
             if sock_fileno == self.server_fileno:
 
                 try:
                     sock, addr_tup = self.server_socket.accept()
-
-                except socket.error, err:
-                    print >> sys.stderr, ("!! ACCEPT error '%d:%s'." %
-                        (err[0], err[1]))
+                except socket.error as err:
+                    logging.error("ACCEPT socket error '{}:{}'.".format(err[0], err[1]))
                     continue
 
-                ## Check for maximum connections
+                # Check for maximum connections
                 if self.client_count() >= MAX_CONNECTIONS:
-                    print '?? Refusing new connection; maximum in use.'
+                    logging.warning("Refusing new connection, maximum already in use.")
                     sock.close()
                     continue
 
+                # Create the client instance
                 new_client = TelnetClient(sock, addr_tup)
-                #print "++ Opened connection to %s" % new_client.addrport()
-                ## Add the connection to our dictionary and call handler
+
+                # Add the connection to our dictionary and call handler
                 self.clients[new_client.fileno] = new_client
                 self.on_connect(new_client)
 
             else:
-                ## Call the connection's recieve method
+                # Call the connection's recieve method
                 try:
                     self.clients[sock_fileno].socket_recv()
-                except BogConnectionLost:
+                except ConnectionLost:
                     self.clients[sock_fileno].deactivate()
 
-        ## Process sockets with data to send
+        # Process sockets with data to send
         for sock_fileno in slist:
-            ## Call the connection's send method
+            # Call the connection's send method
             self.clients[sock_fileno].socket_send()

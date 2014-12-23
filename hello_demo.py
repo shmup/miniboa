@@ -19,9 +19,14 @@ Launch the Telnet server on the default port and greet visitors using the
 placeholder 'on_connect()' function.  Does nothing else.
 """
 
+import logging
 from miniboa import TelnetServer
 
-server = TelnetServer()
-print "\n\nStarting server on port %d.  CTRL-C to interrupt.\n" % server.port
-while True:
-    server.poll()
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+
+    server = TelnetServer()
+
+    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(server.port))
+    while True:
+        server.poll()
