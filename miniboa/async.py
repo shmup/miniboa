@@ -50,7 +50,8 @@ class TelnetServer(object):
     Poll sockets for new connections and sending/receiving data from clients.
     """
     def __init__(self, port=7777, address='', on_connect=_on_connect,
-            on_disconnect=_on_disconnect, timeout=0.05):
+            on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
+            timeout=0.05):
         """
         Create a new Telnet Server.
 
@@ -68,6 +69,8 @@ class TelnetServer(object):
             either through a terminated session or client.active being set
             to False.
 
+        max_connections -- maximum simultaneous the server will accept at once
+
         timeout -- amount of time that Poll() will wait from user input
             before returning.  Also frees a slice of CPU time.
         """
@@ -76,6 +79,7 @@ class TelnetServer(object):
         self.address = address
         self.on_connect = on_connect
         self.on_disconnect = on_disconnect
+        self.max_connections = min(max_connections, MAX_CONNECTIONS)
         self.timeout = timeout
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -167,7 +171,7 @@ class TelnetServer(object):
                     continue
 
                 # Check for maximum connections
-                if self.client_count() >= MAX_CONNECTIONS:
+                if self.client_count() >= self.max_connections:
                     logging.warning("Refusing new connection, maximum already in use.")
                     sock.close()
                     continue
