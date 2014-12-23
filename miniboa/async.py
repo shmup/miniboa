@@ -95,6 +95,14 @@ class TelnetServer(object):
         # key = file descriptor, value = TelnetClient (see miniboa.telnet)
         self.clients = {}
 
+    def stop(self):
+        """
+        Disconnects the clients and shuts down the server
+        """
+        for clients in self.client_list():
+            clients.sock.close()
+        self.server_socket.close()
+
     def client_count(self):
         """
         Returns the number of active connections.
