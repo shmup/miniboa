@@ -17,6 +17,7 @@ License
 =======
 ```
 Copyright 2009 Jim Storch
+Copyright 2015 Carey Metcalfe
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
