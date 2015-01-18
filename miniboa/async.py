@@ -74,7 +74,7 @@ class TelnetServer(object):
         try:
             server_socket.bind((address, port))
             server_socket.listen(5)
-        except socket.err as err:
+        except socket.error as err:
             logging.critical("Unable to create the server socket: " + str(err))
             raise
 
