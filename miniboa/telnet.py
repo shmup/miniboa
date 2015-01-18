@@ -6,8 +6,8 @@ import socket
 import time
 import logging
 
-from miniboa.xterm import colorize
-from miniboa.xterm import word_wrap
+from .xterm import colorize
+from .xterm import word_wrap
 
 
 #---[ Telnet Notes ]-----------------------------------------------------------

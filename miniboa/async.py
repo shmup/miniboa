@@ -7,8 +7,8 @@ import select
 import sys
 import logging
 
-from miniboa.telnet import TelnetClient
-from miniboa.telnet import ConnectionLost
+from .telnet import TelnetClient
+from .telnet import ConnectionLost
 
 # Cap sockets to 512 on Windows because winsock can only process 512 at time
 # Cap sockets to 1000 on UNIX because you can only have 1024 file descriptors

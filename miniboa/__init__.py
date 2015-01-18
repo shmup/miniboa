@@ -1,1 +1,1 @@
-from miniboa.async import TelnetServer
+from .async import TelnetServer
