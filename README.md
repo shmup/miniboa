@@ -1,15 +1,14 @@
-Miniboa-py3
+Miniboa
 ===========
-
-Miniboa-py3 is an asynchronous, single-threaded, poll-based Telnet server
+Miniboa is an asynchronous, single-threaded, poll-based Telnet server
 written in Python. It supports many users (512 on Windows, 1000 on Unix) and
 is fully cross-platform.
 
 This module is ideal for everything from MUD servers to services requiring an
 administration interface.
 
-Miniboa-py3 is a fork of [Jim Storch's miniboa](https://code.google.com/p/miniboa/)
-updated with full support for Python 3.
+Miniboa is a fork of [Jim Storch's miniboa](https://code.google.com/p/miniboa/)
+updated with full support for Python 3, still supporting Python 2.
 
 For full documentation, see the miniboa project page.
 
@@ -18,6 +17,8 @@ License
 ```
 Copyright 2009 Jim Storch
 Copyright 2015 Carey Metcalfe
+Copyright 2016 Joseph Schilz
+Copyright 2016 Jared Miller
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
