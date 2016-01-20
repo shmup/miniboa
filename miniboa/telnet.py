@@ -79,6 +79,8 @@ TTYPE = chr(24)  # Terminal Type
 NAWS = chr(31)  # Negotiate About Window Size
 LINEMO = chr(34)  # Line Mode
 
+PYTHON_2 = sys.version_info < (3,)
+
 
 # Connection Lost Exception
 
@@ -263,7 +265,7 @@ class TelnetClient(object):
         """
         if len(self.send_buffer):
             try:
-                if sys.version_info < (3,):
+                if PYTHON_2:
                     sent = self.sock.send(self.send_buffer)
                 else:
                     # convert to ansi before sending
@@ -282,7 +284,7 @@ class TelnetClient(object):
         Called by TelnetServer when recv data is ready.
         """
         try:
-            if sys.version_info < (3,):
+            if PYTHON_2:
                 data = self.sock.recv(2048)
             else:
                 # Encode recieved bytes in ansi
