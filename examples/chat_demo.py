@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 """
 Chat Room Demo for Miniboa.
 """

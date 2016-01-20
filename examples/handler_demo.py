@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 """
 Example of using on_connect and on_disconnect handlers.
 """

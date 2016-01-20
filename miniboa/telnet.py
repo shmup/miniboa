@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Manage one Telnet client connected via a TCP/IP socket.
 """

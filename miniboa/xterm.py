@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Support for color and formatting for Xterm style clients.
 """

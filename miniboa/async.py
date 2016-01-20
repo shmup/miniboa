@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Handle Asynchronous Telnet Connections.
 """
