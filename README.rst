@@ -43,7 +43,7 @@ This will launch a server listening on the default port, 7777, that accepts Teln
     Trying 127.0.0.1...
     Connected to localhost.
     Escape character is '^]'.
-    Greetings from Miniboa!  Now it's time to add your code.
+    Hello, my friend. Stay awhile and listen.
 
 Further documentation can be `found here <https://github.com/shmup/miniboa/blob/master/docs/index.rst/>`_.
 
