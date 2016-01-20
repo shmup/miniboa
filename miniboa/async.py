@@ -2,42 +2,46 @@
 Handle Asynchronous Telnet Connections.
 """
 
-import socket
-import select
-import sys
 import logging
+import select
+import socket
+import sys
 
-from .telnet import TelnetClient
 from .telnet import ConnectionLost
+from .telnet import TelnetClient
 
 # Cap sockets to 512 on Windows because winsock can only process 512 at time
 # Cap sockets to 1000 on UNIX because you can only have 1024 file descriptors
 MAX_CONNECTIONS = 500 if sys.platform == 'win32' else 1000
 
-#-----------------------------------------------------Dummy Connection Handlers
+
+# Dummy Connection Handlers
 
 def _on_connect(client):
     """
     Placeholder new connection handler.
     """
     logging.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
-    client.send("Greetings from Miniboa-py3!\n")
+    client.send("Greetings\n")
+
 
 def _on_disconnect(client):
     """
     Placeholder lost connection handler.
     """
-    logging.info ("-- Lost connection to %s".format(client.addrport()))
+    logging.info("-- Lost connection to %s".format(client.addrport()))
 
-#-----------------------------------------------------------------Telnet Server
+
+# Telnet Server
 
 class TelnetServer(object):
     """
     Poll sockets for new connections and sending/receiving data from clients.
     """
+
     def __init__(self, port=7777, address='', on_connect=_on_connect,
-            on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-            timeout=0.05):
+                 on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
+                 timeout=0.05):
         """
         Create a new Telnet Server.
 
@@ -105,7 +109,6 @@ class TelnetServer(object):
         """
         return self.clients.values()
 
-
     def poll(self):
         """
         Perform a non-blocking scan of recv and send states on the server
@@ -114,9 +117,9 @@ class TelnetServer(object):
         be partial.
         """
         # Build a list of connections to test for receive data pending
-        recv_list = [self.server_fileno]    # always add the server
+        recv_list = [self.server_fileno]  # always add the server
 
-        del_list = [] # list of clients to delete after polling
+        del_list = []  # list of clients to delete after polling
 
         for client in self.clients.values():
             if client.active:
@@ -138,7 +141,7 @@ class TelnetServer(object):
         # Get active socket file descriptors from select.select()
         try:
             rlist, slist, elist = select.select(recv_list, send_list, [],
-                self.timeout)
+                                                self.timeout)
         except select.error as err:
             # If we can't even use select(), game over man, game over
             logging.critical("SELECT socket error '{}'".format(str(err)))
