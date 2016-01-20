@@ -5,6 +5,7 @@ Manage one Telnet client connected via a TCP/IP socket.
 import logging
 import socket
 import time
+import sys
 
 from .xterm import colorize
 from .xterm import word_wrap
@@ -262,8 +263,11 @@ class TelnetClient(object):
         """
         if len(self.send_buffer):
             try:
-                # convert to ansi before sending
-                sent = self.sock.send(bytes(self.send_buffer, "cp1252"))
+                if sys.version_info < (3,):
+                    sent = self.sock.send(self.send_buffer)
+                else:
+                    # convert to ansi before sending
+                    sent = self.sock.send(bytes(self.send_buffer, "cp1252"))
             except socket.error as err:
                 logging.error("SEND error '{}' from {}".format(err, self.addrport()))
                 self.active = False
@@ -278,8 +282,11 @@ class TelnetClient(object):
         Called by TelnetServer when recv data is ready.
         """
         try:
-            # Encode recieved bytes in ansi
-            data = str(self.sock.recv(2048), "cp1252")
+            if sys.version_info < (3,):
+                data = self.sock.recv(2048)
+            else:
+                # Encode recieved bytes in ansi
+                data = str(self.sock.recv(2048), "cp1252")
         except socket.error as err:
             logging.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
             raise ConnectionLost()
