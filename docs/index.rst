@@ -48,12 +48,12 @@ This will launch a server listening on the default port, 7777, that accepts Teln
 
 Initialization arguments for TelnetServer are:
 
-- server = TelnetServer(port=8888, address='127.0.0.1', on_connect=my_connect_handler, on_disconnect=my_disconnect_handler)
-- port - the network port you want the server to listen for new connections on. You should be aware that on Linux, port numbers 1024 and below are restricted for use by normal users. The default is port 7777.
-- address - this is the address of the local network interface you wish the server to listen on. You can usually omit this parameter (or pass an empty string; '') which causes it to listen on any viable NIC. Unless your server is directly connected to the Internet (doubtful today) do not set this to the Internet IP address of your server. The default is an empty string.
-- on_connect - this is the handler function that is called by the server when a new connection is made. It will be passed the Client object of the new user. The default is a placeholder function that greets the visitor and prints their connection info to stdout.
-- on_disconnect - this is the hander function that is called by the server when connection is lost. It will be passed the Client object of the lost user. The default is a placeholder function that prints the lost connection info to stdout.
-- timeout - length of time to wait for user input during each poll(). Default is 5 milliseconds.
+- **server** = TelnetServer(port=8888, address='127.0.0.1', on_connect=my_connect_handler, on_disconnect=my_disconnect_handler)
+- **port** - the network port you want the server to listen for new connections on. You should be aware that on Linux, port numbers 1024 and below are restricted for use by normal users. The default is port 7777.
+- **address** - this is the address of the local network interface you wish the server to listen on. You can usually omit this parameter (or pass an empty string; '') which causes it to listen on any viable NIC. Unless your server is directly connected to the Internet (doubtful today) do not set this to the Internet IP address of your server. The default is an empty string.
+- **on_connect** - this is the handler function that is called by the server when a new connection is made. It will be passed the Client object of the new user. The default is a placeholder function that greets the visitor and prints their connection info to stdout.
+- **on_disconnect** - this is the hander function that is called by the server when connection is lost. It will be passed the Client object of the lost user. The default is a placeholder function that prints the lost connection info to stdout.
+- **timeout** - length of time to wait for user input during each poll(). Default is 5 milliseconds.
 
 The follow Server Properties can be read from:
 
@@ -62,13 +62,13 @@ The follow Server Properties can be read from:
 
 You can set or change these after creating the server:
 
-- on_connect - handler function for new connections.
-- on_disconnect - handler function for lost connections.
-- timeout - length of time to wait on user input during a pol(). Default is .005 seconds. Increasing this value also lowers CPU usage.
-- Server Methods
-- poll() - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players. A call to this method needs to be made from within your program's game loop.
-- connection_count() - returns the number of current connections.
-- client_list() - returns a list of the current client objects.
+- **on_connect** - handler function for new connections.
+- **on_disconnect** - handler function for lost connections.
+- **timeout** - length of time to wait on user input during a pol(). Default is .005 seconds. Increasing this value also lowers CPU usage.
+- **Server** Methods
+- **poll()** - this is where the server looks for new connections and processes existing connection that need to send and/or receive blocks of data with the players. A call to this method needs to be made from within your program's game loop.
+- **connection_count()** - returns the number of current connections.
+- **client_list()** - returns a list of the current client objects.
 
 Here's a simple example with custom on_connect() and on_disconnect() handlers:
 
