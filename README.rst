@@ -2,6 +2,8 @@
 Miniboa: a simple Telnet server
 ===================================================================
 
+.. image:: http://i.imgur.com/wBqUzig.png
+
 -----
 What?
 -----
