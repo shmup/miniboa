@@ -2,7 +2,13 @@
 Miniboa: a simple Telnet server
 ===============================
 
-.. image:: http://i.imgur.com/wBqUzig.png
+.. image:: https://travis-ci.org/shmup/miniboa.svg
+   :alt: build status
+   :target: https://travis-ci.org/shmup/miniboa
+
+.. image:: https://img.shields.io/pypi/v/miniboa.svg
+   :target: https://pypi.python.org/pypi/miniboa
+   :alt: downloads 
 
 -----
 What?
