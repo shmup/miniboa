@@ -9,13 +9,15 @@ python:
   - "3.5"
   - "3.5-dev"
 install:
-  - pip install flake8==2.1.0 pep8==1.5.6
-  - python setup.py install
+  - pip install flake8
   - pip list
   - flake8 --version
 script:
   - nosetests
-  - "flake8 --max-line-length=100"
+  - flake8 . --max-line-length=100
+notifications:
+  email:
+    - jtmiller@gmail.com
 branches:
   only:
     - master
