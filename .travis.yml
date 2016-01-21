@@ -8,7 +8,6 @@ python:
   - "3.4"
   - "3.5"
   - "3.5-dev"
-  - "nightly"
 install:
   - pip install flake8==2.1.0 pep8==1.5.6
   - python setup.py install
@@ -16,4 +15,7 @@ install:
   - flake8 --version
 script:
   - nosetests
-  - flake8 --max-line-length=100 .
+  - flake8 --max-line-length=100
+branches:
+  only:
+    - master
