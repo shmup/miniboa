@@ -15,7 +15,7 @@ install:
   - flake8 --version
 script:
   - nosetests
-  - flake8 --max-line-length=100
+  - "flake8 --max-line-length=100"
 branches:
   only:
     - master
