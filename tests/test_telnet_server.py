@@ -19,7 +19,7 @@ def test_telnet_server():
     server.poll()
 
     # test that we have one connected client
-    assert len(CLIENTS) == 2
+    assert len(CLIENTS) == 1
 
     CLIENTS[0].send("test")
     server.poll()
