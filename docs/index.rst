@@ -1,6 +1,6 @@
-===================================================================
+===============================
 Miniboa: a simple Telnet server
-===================================================================
+===============================
 
 -----
 What?
@@ -140,9 +140,9 @@ The client buffers user's input and breaks it into lines of text that can be ret
 
 Keep in mind that request_naws() and request_terminal_type() are not instantaneous. When you call them, a special byte sequence is added to the client's send buffer and wont actually transmit until the next server.poll() call. Then the distant end has to reply (assuming they support them) and those replies require another server.poll() to process the socket's input.
 
-------------
+----------
 Hello Demo
-------------
+----------
 
 .. code-block:: python
 

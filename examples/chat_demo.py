@@ -101,7 +101,7 @@ if __name__ == '__main__':
         address='',
         on_connect=on_connect,
         on_disconnect=on_disconnect,
-        timeout = .05
+        timeout=.05
         )
 
     logging.info("Listening for connections on port {}. CTRL-C to break.".format(telnet_server.port))
