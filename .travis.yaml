@@ -9,4 +9,6 @@ python:
   - "3.5"
   - "3.5-dev"
   - "nightly"
-script: nosetests
+script:
+  - "flake8 --max-line-length=100 ."
+  - nosetests

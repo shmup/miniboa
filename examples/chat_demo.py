@@ -104,7 +104,8 @@ if __name__ == '__main__':
         timeout=.05
         )
 
-    logging.info("Listening for connections on port {}. CTRL-C to break.".format(telnet_server.port))
+    logging.info("Listening for connections on"
+                 " port {}. CTRL-C to break.".format(telnet_server.port))
 
     # Server Loop
     while SERVER_RUN:

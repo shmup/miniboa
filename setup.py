@@ -14,4 +14,3 @@ setup(
     keywords=['mud', 'tcp', 'telnet'],
     license='Apache 2'
 )
-
