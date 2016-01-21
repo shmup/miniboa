@@ -10,9 +10,6 @@ Miniboa: a simple Telnet server
    :target: https://pypi.python.org/pypi/miniboa
    :alt: downloads 
 
-.. image:: http://i.imgur.com/wBqUzig.png
-    :alt: Miniboa
-
 -----
 What?
 -----
