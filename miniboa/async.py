@@ -23,7 +23,7 @@ def _on_connect(client):
     Placeholder new connection handler.
     """
     logging.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
-    client.send("Greetings\n")
+    client.send("Hello, my friend. Stay awhile and listen.\n")
 
 
 def _on_disconnect(client):
