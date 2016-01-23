@@ -52,7 +52,7 @@ But you probably want to do something with the connecting/disconnecting clients:
 
     def on_connect(client):
         client.send("Hello, my friend. Stay awhile and listen.")
-        CLIENTS.add(client)
+        CLIENTS.append(client)
 
     def on_disconnect(client):
         CLIENTS.remove(client)
