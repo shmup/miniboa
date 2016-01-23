@@ -30,12 +30,13 @@ Features
 Quick Start
 -----------
 
-To use Miniboa, you create a Telnet Server object listening at a specified port number. You have to provide two functions for the server; the first is a handler for new connections and the second is the handler for lost connections. These handler functions are passed Telnet Client objects -- these are your communication paths to and from the individual player's MUD client.
+First:
 
-For example, let's say Mike and Joe connect to your MUD server. Telnet Server will call your on_connect() function with Mike's Telnet Client object, and then again with Joe's Telnet Client object. If Mike's power goes out, Telnet Server will call your on_disconnect() function with Mike's Telnet Client object (same exact one).
+.. code-block:: bash
 
+    pip install miniboa
 
-Telnet servers are instances of the TelnetServer class from miniboa.async. Creating a Telnet Server is pretty simple. In fact, you can run one with the following three lines of code:
+And then:
 
 .. code-block:: python
 
@@ -43,7 +44,34 @@ Telnet servers are instances of the TelnetServer class from miniboa.async. Creat
     server = TelnetServer()
     while True: server.poll()
 
-This will launch a server listening on the default port, 7777, that accepts Telnet connections and sends a simple greeting;
+But you probably want to do something with the connecting/disconnecting clients:
+
+.. code-block:: python
+
+    CLIENTS = []
+
+    def on_connect(client):
+        client.send("Hello, my friend. Stay awhile and listen.")
+        CLIENTS.add(client)
+
+    def on_disconnect(client):
+        CLIENTS.remove(client)
+
+    server = TelnetServer(
+        port = 3333,
+        address = '',
+        on_connect = on_connect,
+        on_disconnect = on_disconnect,
+
+    while True:
+        server.poll()
+
+
+To use Miniboa, you create a Telnet Server object listening at a specified port number. You have to provide two functions for the server; the first is a handler for new connections and the second is the handler for lost connections. These handler functions are passed Telnet Client objects -- these are your communication paths to and from the individual player's MUD client.
+
+For example, let's say Mike and Joe connect to your MUD server. Telnet Server will call your on_connect() function with Mike's Telnet Client object, and then again with Joe's Telnet Client object. If Mike's power goes out, Telnet Server will call your on_disconnect() function with Mike's Telnet Client object (same exact one).
+
+This will launch a server listening on the default port, that accepts Telnet connections and sends a simple message.
 
 .. code-block:: bash
 
