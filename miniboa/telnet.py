@@ -597,7 +597,7 @@ class TelnetClient(object):
             self.telnet_opt_dict[option] = TelnetOption()
         return self.telnet_opt_dict[option].local_option
 
-    def _set_local_option(self, option, state):
+    def _note_local_option(self, option, state):
         """
         Record the status of local negotiated Telnet options.
         """
@@ -613,7 +613,7 @@ class TelnetClient(object):
             self.telnet_opt_dict[option] = TelnetOption()
         return self.telnet_opt_dict[option].remote_option
 
-    def _set_remote_option(self, option, state):
+    def _note_remote_option(self, option, state):
         """
         Record the status of local negotiated Telnet options.
         """
@@ -629,7 +629,7 @@ class TelnetClient(object):
             self.telnet_opt_dict[option] = TelnetOption()
         return self.telnet_opt_dict[option].reply_pending
 
-    def _set_reply_pending(self, option, state):
+    def _note_reply_pending(self, option, state):
         """
         Record the status of requested Telnet options.
         """
