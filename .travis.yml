@@ -14,7 +14,8 @@ install:
   - flake8 --version
 script:
   - nosetests
-  - flake8 . --max-line-length=100
+  - pycodestyle . --max-line-length=100
+  - pyflakes .
 notifications:
   email:
     - jtmiller@gmail.com
