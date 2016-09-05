@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from .async import TelnetServer
 
+__version__ = "1.0.1"
+
 __title__ = "miniboa"
 __description__ = "Asynchronous, single-threaded, poll-based Telnet server"
 __uri__ = "https://github.com/shmup/miniboa"
