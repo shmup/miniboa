@@ -61,7 +61,7 @@ But you probably want to do something with the connecting/disconnecting clients:
         port = 3333,
         address = '',
         on_connect = on_connect,
-        on_disconnect = on_disconnect,
+        on_disconnect = on_disconnect)
 
     while True:
         server.poll()
