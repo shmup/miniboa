@@ -42,7 +42,7 @@ class TelnetServer(object):
 
     def __init__(self, port=7777, address='', on_connect=_on_connect,
                  on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-                 timeout=0.05):
+                 timeout=0.05, client_class=None):
         """
         Create a new Telnet Server.
 
@@ -64,7 +64,15 @@ class TelnetServer(object):
 
         timeout -- amount of time that Poll() will wait from user input
             before returning.  Also frees a slice of CPU time.
+
+        # Make sure client_class is a subclass of TelnetClient to ensure it
+        # will work fine.
+        client_class -- the client class to use when accepting new connections.
+            If None, the built-in TelnetClient will be used.
         """
+
+        if client_class and not issubclass(client_class, TelnetClient):
+            raise TypeError('client_class must be a subclass of TelnetClient')
 
         self.port = port
         self.address = address
@@ -72,6 +80,7 @@ class TelnetServer(object):
         self.on_disconnect = on_disconnect
         self.max_connections = min(max_connections, MAX_CONNECTIONS)
         self.timeout = timeout
+        self.client_class = client_class or TelnetClient
 
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -87,7 +96,7 @@ class TelnetServer(object):
         self.server_fileno = server_socket.fileno()
 
         # Dictionary of active clients,
-        # key = file descriptor, value = TelnetClient (see miniboa.telnet)
+        # key = file descriptor, value = self.client_class (see miniboa.telnet)
         self.clients = {}
 
     def stop(self):
@@ -167,7 +176,7 @@ class TelnetServer(object):
                     continue
 
                 # Create the client instance
-                new_client = TelnetClient(sock, addr_tup)
+                new_client = self.client_class(sock, addr_tup)
 
                 # Add the connection to our dictionary and call handler
                 self.clients[new_client.fileno] = new_client

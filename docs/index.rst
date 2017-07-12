@@ -140,6 +140,24 @@ The client buffers user's input and breaks it into lines of text that can be ret
 
 Keep in mind that request_naws() and request_terminal_type() are not instantaneous. When you call them, a special byte sequence is added to the client's send buffer and wont actually transmit until the next server.poll() call. Then the distant end has to reply (assuming they support them) and those replies require another server.poll() to process the socket's input.
 
+**Overriding the client class**
+
+It is possible to override the client class TelnetServer uses for every new connection.  To use this, you must subclass TelnetClient, and pass it to the TelnetServer constructor.
+
+.. code-block:: python
+
+   from miniboa import TelnetServer
+   from miniboa.telnet import TelnetClient
+
+
+   class MyClientClass(TelnetClient):
+       # Do your own magic here
+
+       pass
+
+
+   server = TelnetServer(client_class=MyClientClass)
+
 ----------
 Hello Demo
 ----------
