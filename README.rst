@@ -24,7 +24,7 @@ Features
 - Single threaded - light on resources with excellent performance.
 - Runs under your game loop - you decide when to poll for data.
 - Supports 1000 users under Linux and 512 under Windows (untested).
-- Miniboa is compatable with both Python 2.6, 2.7, and 3.
+- Miniboa is compatible with both Python 2.6, 2.7, and 3.
 
 -----------
 Quick Start
@@ -48,20 +48,23 @@ But you probably want to do something with the connecting/disconnecting clients:
 
 .. code-block:: python
 
-    CLIENTS = []
+    clients = []
+
 
     def on_connect(client):
         client.send("Hello, my friend. Stay awhile and listen.")
-        CLIENTS.append(client)
+        clients.append(client)
+
 
     def on_disconnect(client):
-        CLIENTS.remove(client)
+        clients.remove(client)
+
 
     server = TelnetServer(
-        port = 3333,
-        address = '',
-        on_connect = on_connect,
-        on_disconnect = on_disconnect)
+        port=3333,
+        address='',
+        on_connect=on_connect,
+        on_disconnect=on_disconnect)
 
     while True:
         server.poll()
