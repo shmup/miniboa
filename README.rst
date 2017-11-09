@@ -24,7 +24,7 @@ Features
 - Single threaded - light on resources with excellent performance.
 - Runs under your game loop - you decide when to poll for data.
 - Supports 1000 users under Linux and 512 under Windows (untested).
-- Miniboa is compatible with both Python 2.6, 2.7, and 3.
+- Miniboa is compatible with both Python 2.7, and 3.x
 
 -----------
 Quick Start
