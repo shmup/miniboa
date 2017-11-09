@@ -11,6 +11,8 @@ import sys
 from .xterm import colorize
 from .xterm import word_wrap
 
+LOG = logging.getLogger(__name__)
+
 # Telnet Notes
 # (See RFC 854 for more information)
 #
@@ -272,7 +274,7 @@ class TelnetClient(object):
                     # convert to ansi before sending
                     sent = self.sock.send(bytes(self.send_buffer, "cp1252"))
             except socket.error as err:
-                logging.error("SEND error '{}' from {}".format(err, self.addrport()))
+                LOG.error("SEND error '{}' from {}".format(err, self.addrport()))
                 self.active = False
                 return
             self.bytes_sent += sent
@@ -291,13 +293,13 @@ class TelnetClient(object):
                 # Encode recieved bytes in ansi
                 data = str(self.sock.recv(2048), "cp1252")
         except socket.error as err:
-            logging.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
+            LOG.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
             raise ConnectionLost()
 
         # Did they close the connection?
         size = len(data)
         if size == 0:
-            logging.debug("No data recieved, client closed connection")
+            LOG.debug("No data recieved, client closed connection")
             raise ConnectionLost()
 
         # Update some trackers
@@ -413,7 +415,7 @@ class TelnetClient(object):
         """
         Handle incoming Telnet commands that are two bytes long.
         """
-        logging.debug("Got two byte cmd '{}'".format(ord(cmd)))
+        LOG.debug("Got two byte cmd '{}'".format(ord(cmd)))
 
         if cmd == SB:
             # Begin capturing a sub-negotiation string
@@ -450,7 +452,7 @@ class TelnetClient(object):
             pass
 
         else:
-            logging.warning("Send an invalid 2 byte command")
+            LOG.warning("Send an invalid 2 byte command")
 
         self.telnet_got_iac = False
         self.telnet_got_cmd = None
@@ -460,7 +462,7 @@ class TelnetClient(object):
         Handle incoming Telnet commmands that are three bytes long.
         """
         cmd = self.telnet_got_cmd
-        logging.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
+        LOG.debug("Got three byte cmd {}:{}".format(ord(cmd), ord(option)))
 
         # Incoming DO's and DONT's refer to the status of this end
         if cmd == DO:
@@ -560,7 +562,7 @@ class TelnetClient(object):
                 # Ignore all other options
                 pass
         else:
-            logging.warning("Send an invalid 3 byte command")
+            LOG.warning("Send an invalid 3 byte command")
 
         self.telnet_got_iac = False
         self.telnet_got_cmd = None
@@ -574,16 +576,16 @@ class TelnetClient(object):
 
             if bloc[0] == TTYPE and bloc[1] == IS:
                 self.terminal_type = bloc[2:]
-                logging.debug("Terminal type = '{}'".format(self.terminal_type))
+                LOG.debug("Terminal type = '{}'".format(self.terminal_type))
 
             if bloc[0] == NAWS:
                 if len(bloc) != 5:
-                    logging.warning("Bad length on NAWS SB: " + str(len(bloc)))
+                    LOG.warning("Bad length on NAWS SB: " + str(len(bloc)))
                 else:
                     self.columns = (256 * ord(bloc[1])) + ord(bloc[2])
                     self.rows = (256 * ord(bloc[3])) + ord(bloc[4])
 
-                logging.info("Screen is {} x {}".format(self.columns, self.rows))
+                LOG.info("Screen is {} x {}".format(self.columns, self.rows))
 
         self.telnet_sb_buffer = ''
 
