@@ -42,7 +42,8 @@ class TelnetServer(object):
 
     def __init__(self, port=7777, address='', on_connect=_on_connect,
                  on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-                 timeout=0.05, client_class=None):
+                 timeout=0.05, client_class=None,
+                 socket_family=None):
         """
         Create a new Telnet Server.
 
@@ -69,6 +70,10 @@ class TelnetServer(object):
         # will work fine.
         client_class -- the client class to use when accepting new connections.
             If None, the built-in TelnetClient will be used.
+
+        socket_family -- the server socket family to use (typically one
+            of AF_INET, or AF_INET6 or AF_UNIX). If None then
+            AF_INET will be used.
         """
 
         if client_class and not issubclass(client_class, TelnetClient):
@@ -82,7 +87,9 @@ class TelnetServer(object):
         self.timeout = timeout
         self.client_class = client_class or TelnetClient
 
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if socket_family is None:
+            socket_family = socket.AF_INET
+        server_socket = socket.socket(socket_family, socket.SOCK_STREAM)
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         try:
