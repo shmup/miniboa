@@ -7,6 +7,51 @@ import re
 
 _PARA_BREAK = re.compile(r"(\n\s*\n)", re.MULTILINE)
 
+# Caret contants for users to use.
+
+BLACK = '^k'
+BLACK_BACKGROUND = '^0'
+BRIGHT_BLACK = '^K'
+
+BLUE = '^b'
+BLUE_BACKGROUND = '^4'
+BRIGHT_BLUE = '^B'
+
+CYAN = '^c'
+CYAN_BACKGROUND = '^6'
+BRIGHT_CYAN = '^C'
+
+DEFAULT = '^d'
+
+GREEN = '^g'
+GREEN_BACKGROUND = '^2'
+BRIGHT_GREEN = '^G'
+
+MAGENTA = '^m'
+MAGENTA_BACKGROUND = '^5'
+BRIGHT_MAGENTA = '^M'
+
+RED = '^r'
+RED_BACKGROUND = '^1'
+BRIGHT_RED = '^R'
+
+WHITE = '^w'
+BRIGHT_WHITE = '^W'
+
+YELLOW = '^y'
+YELLOW_BACKGROUND = '^3'
+BRIGHT_YELLOW = '^Y'
+
+BOLD_OFF = '^.'
+BOLD_ON = '^!'
+CLEAR_SCREEN = '^s'
+CLEAR_TO_END_OF_LINE = '^l'
+INVERSE_TEXT_OFF = '^i'
+INVERSE_TEXT_ON = '^I'
+RESET_ALL = '^~'
+UNDERLINE_OFF = '^u'
+UNDERLINE_ON = '^U'
+
 # Caret Code to ANSI TABLE
 
 _ANSI_CODES = (
