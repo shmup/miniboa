@@ -53,18 +53,18 @@ But you probably want to do something with the connecting/disconnecting clients:
 
     def on_connect(client):
         client.send("Hello, my friend. Stay awhile and listen.")
-        clients.append(client)
+        clients.append(client)
 
 
     def on_disconnect(client):
-        clients.remove(client)
+        clients.remove(client)
 
 
     server = TelnetServer(
-        port=3333,
-        address='',
-        on_connect=on_connect,
-        on_disconnect=on_disconnect)
+        port=3333,
+        address='',
+        on_connect=on_connect,
+        on_disconnect=on_disconnect)
 
     while True:
         server.poll()

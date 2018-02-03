@@ -17,8 +17,8 @@ MAX_CONNECTIONS = 500 if sys.platform == 'win32' else 1000
 
 LOG = logging.getLogger(__name__)
 
-# Dummy Connection Handlers
 
+# Dummy Connection Handlers
 def _on_connect(client):
     """
     Placeholder new connection handler.
