@@ -37,6 +37,7 @@ if __name__ == "__main__":
     server.on_connect = my_on_connect
     server.on_disconnect = my_on_disconnect
 
-    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(server.port))
+    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(
+        server.port))
     while True:
         server.poll()

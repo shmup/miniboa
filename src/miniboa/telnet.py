@@ -52,41 +52,38 @@ LOG = logging.getLogger(__name__)
 UNKNOWN = -1
 
 # Telnet Commands
-
-SE = chr(240)  # End of subnegotiation parameters
-NOP = chr(241)  # No operation
-DATMK = chr(242)  # Data stream portion of a sync.
-BREAK = chr(243)  # NVT Character BRK
-IP = chr(244)  # Interrupt Process
-AO = chr(245)  # Abort Output
-AYT = chr(246)  # Are you there
-EC = chr(247)  # Erase Character
-EL = chr(248)  # Erase Line
-GA = chr(249)  # The Go Ahead Signal
-SB = chr(250)  # Sub-option to follow
-WILL = chr(251)  # Will; request or confirm option begin
-WONT = chr(252)  # Wont; deny option request
-DO = chr(253)  # Do = Request or confirm remote option
-DONT = chr(254)  # Don't = Demand or confirm option halt
-IAC = chr(255)  # Interpret as Command
-SEND = chr(1)  # Sub-process negotiation SEND command
-IS = chr(0)  # Sub-process negotiation IS command
+SE = chr(240)    # End of subnegotiation parameters
+NOP = chr(241)    # No operation
+DATMK = chr(242)    # Data stream portion of a sync.
+BREAK = chr(243)    # NVT Character BRK
+IP = chr(244)    # Interrupt Process
+AO = chr(245)    # Abort Output
+AYT = chr(246)    # Are you there
+EC = chr(247)    # Erase Character
+EL = chr(248)    # Erase Line
+GA = chr(249)    # The Go Ahead Signal
+SB = chr(250)    # Sub-option to follow
+WILL = chr(251)    # Will; request or confirm option begin
+WONT = chr(252)    # Wont; deny option request
+DO = chr(253)    # Do = Request or confirm remote option
+DONT = chr(254)    # Don't = Demand or confirm option halt
+IAC = chr(255)    # Interpret as Command
+SEND = chr(1)    # Sub-process negotiation SEND command
+IS = chr(0)    # Sub-process negotiation IS command
 
 # Telnet Options
+BINARY = chr(0)    # Transmit Binary
+ECHO = chr(1)    # Echo characters back to sender
+RECON = chr(2)    # Reconnection
+SGA = chr(3)    # Suppress Go-Ahead
+TTYPE = chr(24)    # Terminal Type
+NAWS = chr(31)    # Negotiate About Window Size
+LINEMO = chr(34)    # Line Mode
 
-BINARY = chr(0)  # Transmit Binary
-ECHO = chr(1)  # Echo characters back to sender
-RECON = chr(2)  # Reconnection
-SGA = chr(3)  # Suppress Go-Ahead
-TTYPE = chr(24)  # Terminal Type
-NAWS = chr(31)  # Negotiate About Window Size
-LINEMO = chr(34)  # Line Mode
-
-PYTHON_2 = sys.version_info < (3,)
+PYTHON_2 = sys.version_info < (3, )
 
 
 # Connection Lost Exception
-
 class ConnectionLost(Exception):
     """
     Custom exception to signal a lost connection to the Telnet Server.
@@ -95,20 +92,18 @@ class ConnectionLost(Exception):
 
 
 # Telnet Option
-
 class TelnetOption(object):
     """
     Simple class used to track the status of an extended Telnet option.
     """
 
     def __init__(self):
-        self.local_option = UNKNOWN  # Local state of an option
-        self.remote_option = UNKNOWN  # Remote state of an option
-        self.reply_pending = False  # Are we expecting a reply?
+        self.local_option = UNKNOWN    # Local state of an option
+        self.remote_option = UNKNOWN    # Remote state of an option
+        self.reply_pending = False    # Are we expecting a reply?
 
 
 # Telnet
-
 class TelnetClient(object):
     """
     Represents a client connection via Telnet.
@@ -119,12 +114,12 @@ class TelnetClient(object):
 
     def __init__(self, sock, addr_tup):
         self.protocol = 'telnet'
-        self.active = True  # Turns False when the connection is lost
-        self.sock = sock  # The connection's socket
-        self.fileno = sock.fileno()  # The socket's file descriptor
-        self.address = addr_tup[0]  # The client's remote TCP/IP address
-        self.port = addr_tup[1]  # The client's remote port
-        self.terminal_type = 'ANSI'  # set via request_terminal_type()
+        self.active = True    # Turns False when the connection is lost
+        self.sock = sock    # The connection's socket
+        self.fileno = sock.fileno()    # The socket's file descriptor
+        self.address = addr_tup[0]    # The client's remote TCP/IP address
+        self.port = addr_tup[1]    # The client's remote port
+        self.terminal_type = 'ANSI'    # set via request_terminal_type()
         self.use_ansi = True
         self.columns = 80
         self.rows = 24
@@ -139,13 +134,13 @@ class TelnetClient(object):
         self.last_input_time = time.time()
 
         # State variables for interpreting incoming telnet commands
-        self.telnet_got_iac = False  # Are we inside an IAC sequence?
-        self.telnet_got_cmd = None  # Did we get a telnet command?
-        self.telnet_got_sb = False  # Are we inside a subnegotiation?
-        self.telnet_opt_dict = {}  # Mapping for up to 256 TelnetOptions
-        self.telnet_echo = False  # Echo input back to the client?
-        self.telnet_echo_password = False  # Echo back '*' for passwords?
-        self.telnet_sb_buffer = ''  # Buffer for sub-negotiations
+        self.telnet_got_iac = False    # Are we inside an IAC sequence?
+        self.telnet_got_cmd = None    # Did we get a telnet command?
+        self.telnet_got_sb = False    # Are we inside a subnegotiation?
+        self.telnet_opt_dict = {}    # Mapping for up to 256 TelnetOptions
+        self.telnet_echo = False    # Echo input back to the client?
+        self.telnet_echo_password = False    # Echo back '*' for passwords?
+        self.telnet_sb_buffer = ''    # Buffer for sub-negotiations
 
     def get_command(self):
         """
@@ -274,7 +269,8 @@ class TelnetClient(object):
                     # convert to ansi before sending
                     sent = self.sock.send(bytes(self.send_buffer, "utf-8"))
             except socket.error as err:
-                LOG.error("SEND error '{}' from {}".format(err, self.addrport()))
+                LOG.error("SEND error '{}' from {}".format(
+                    err, self.addrport()))
                 self.active = False
                 return
             self.bytes_sent += sent
@@ -293,7 +289,8 @@ class TelnetClient(object):
                 # Encode recieved bytes in ansi
                 data = str(self.sock.recv(2048), "utf-8")
         except socket.error as err:
-            LOG.error("RECIEVE socket error '{}' from {}".format(err, self.addrport()))
+            LOG.error("RECIEVE socket error '{}' from {}".format(
+                err, self.addrport()))
             raise ConnectionLost()
 
         # Did they close the connection?
@@ -472,8 +469,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_local_option(option, True)
 
-                elif (self._check_local_option(option) is False or
-                        self._check_local_option(option) is UNKNOWN):
+                elif (self._check_local_option(option) is False
+                      or self._check_local_option(option) is UNKNOWN):
                     self._note_local_option(option, True)
                     self._iac_will(option)
                     # Just nod unless setting echo
@@ -493,8 +490,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_local_option(option, False)
 
-                elif (self._check_local_option(option) is True or
-                        self._check_local_option(option) is UNKNOWN):
+                elif (self._check_local_option(option) is True
+                      or self._check_local_option(option) is UNKNOWN):
                     self._note_local_option(option, False)
                     self._iac_wont(option)
                     # Just nod unless setting echo
@@ -519,8 +516,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_remote_option(option, True)
 
-                elif (self._check_remote_option(option) is False or
-                        self._check_remote_option(option) is UNKNOWN):
+                elif (self._check_remote_option(option) is False
+                      or self._check_remote_option(option) is UNKNOWN):
                     self._note_remote_option(option, True)
                     self._iac_do(option)
                     # Client should respond with SB (for NAWS)
@@ -530,10 +527,11 @@ class TelnetClient(object):
                     self._note_reply_pending(TTYPE, False)
                     self._note_remote_option(TTYPE, True)
                     # Tell them to send their terminal type
-                    self.send("{}{}{}{}{}{}".format(IAC, SB, TTYPE, SEND, IAC, SE))
+                    self.send("{}{}{}{}{}{}".format(IAC, SB, TTYPE, SEND, IAC,
+                                                    SE))
 
-                elif (self._check_remote_option(TTYPE) is False or
-                        self._check_remote_option(TTYPE) is UNKNOWN):
+                elif (self._check_remote_option(TTYPE) is False
+                      or self._check_remote_option(TTYPE) is UNKNOWN):
                     self._note_remote_option(TTYPE, True)
                     self._iac_do(TTYPE)
 
@@ -551,8 +549,8 @@ class TelnetClient(object):
                     self._note_reply_pending(option, False)
                     self._note_remote_option(option, False)
 
-                elif (self._check_remote_option(option) is True or
-                        self._check_remote_option(option) is UNKNOWN):
+                elif (self._check_remote_option(option) is True
+                      or self._check_remote_option(option) is UNKNOWN):
                     self._note_remote_option(option, False)
                     self._iac_dont(option)
 
@@ -590,7 +588,6 @@ class TelnetClient(object):
         self.telnet_sb_buffer = ''
 
     # State Juggling for Telnet Options
-
     def _check_local_option(self, option):
         """
         Test the status of local negotiated Telnet options.
@@ -640,7 +637,6 @@ class TelnetClient(object):
         self.telnet_opt_dict[option].reply_pending = state
 
     # Telnet Command Shortcuts
-
     def _iac_do(self, option):
         """
         Send a Telnet IAC "DO" sequence.

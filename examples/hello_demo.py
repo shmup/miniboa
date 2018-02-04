@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
     server = TelnetServer()
 
-    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(server.port))
+    logging.info("Starting server on port {}. CTRL-C to interrupt.".format(
+        server.port))
     while True:
         server.poll()

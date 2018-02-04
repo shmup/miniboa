@@ -23,7 +23,8 @@ def _on_connect(client):
     """
     Placeholder new connection handler.
     """
-    LOG.info("++ Opened connection to {}, sending greeting...".format(client.addrport()))
+    LOG.info("++ Opened connection to {}, sending greeting...".format(
+        client.addrport()))
     client.send("Hello, my friend. Stay awhile and listen.\n")
 
 
@@ -35,15 +36,19 @@ def _on_disconnect(client):
 
 
 # Telnet Server
-
 class TelnetServer(object):
     """
     Poll sockets for new connections and sending/receiving data from clients.
     """
 
-    def __init__(self, port=7777, address='', on_connect=_on_connect,
-                 on_disconnect=_on_disconnect, max_connections=MAX_CONNECTIONS,
-                 timeout=0.05, client_class=None,
+    def __init__(self,
+                 port=7777,
+                 address='',
+                 on_connect=_on_connect,
+                 on_disconnect=_on_disconnect,
+                 max_connections=MAX_CONNECTIONS,
+                 timeout=0.05,
+                 client_class=None,
                  socket_family=None):
         """
         Create a new Telnet Server.
@@ -135,9 +140,9 @@ class TelnetServer(object):
         be partial.
         """
         # Build a list of connections to test for receive data pending
-        recv_list = [self.server_fileno]  # always add the server
+        recv_list = [self.server_fileno]    # always add the server
 
-        del_list = []  # list of clients to delete after polling
+        del_list = []    # list of clients to delete after polling
 
         for client in self.clients.values():
             if client.active:
@@ -174,12 +179,14 @@ class TelnetServer(object):
                 try:
                     sock, addr_tup = self.server_socket.accept()
                 except socket.error as err:
-                    LOG.error("ACCEPT socket error '{}:{}'.".format(err[0], err[1]))
+                    LOG.error("ACCEPT socket error '{}:{}'.".format(
+                        err[0], err[1]))
                     continue
 
                 # Check for maximum connections
                 if self.client_count() >= self.max_connections:
-                    LOG.warning("Refusing new connection, maximum already in use.")
+                    LOG.warning(
+                        "Refusing new connection, maximum already in use.")
                     sock.close()
                     continue
 

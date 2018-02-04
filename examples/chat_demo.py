@@ -39,7 +39,8 @@ def kick_idle():
     # Who hasn't been typing?
     for client in CLIENT_LIST:
         if client.idle() > IDLE_TIMEOUT:
-            logging.info("Kicking idle lobby client from {}".format(client.addrport()))
+            logging.info("Kicking idle lobby client from {}".format(
+                client.addrport()))
             client.active = False
 
 
@@ -89,28 +90,25 @@ if __name__ == '__main__':
 
     # Simple chat server to demonstrate connection handling via the
     # async and telnet modules.
-
     logging.basicConfig(level=logging.DEBUG)
 
     # Create a telnet server with a port, address,
     # a function to call with new connections
     # and one to call with lost connections.
-
     telnet_server = TelnetServer(
         port=7777,
         address='',
         on_connect=on_connect,
         on_disconnect=on_disconnect,
-        timeout=.05
-        )
+        timeout=.05)
 
     logging.info("Listening for connections on"
                  " port {}. CTRL-C to break.".format(telnet_server.port))
 
     # Server Loop
     while SERVER_RUN:
-        telnet_server.poll()        # Send, Recv, and look for new connections
-        kick_idle()                 # Check for idle clients
-        process_clients()           # Check for client input
+        telnet_server.poll()    # Send, Recv, and look for new connections
+        kick_idle()    # Check for idle clients
+        process_clients()    # Check for client input
 
     logging.info("Server shutdown.")
