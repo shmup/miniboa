@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .async import TelnetServer
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 __title__ = "miniboa"
 __description__ = "Asynchronous, single-threaded, poll-based Telnet server"
