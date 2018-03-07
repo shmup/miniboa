@@ -95,4 +95,4 @@ Copyright
     Copyright 2009 Jim Storch
     Copyright 2015 Carey Metcalfe
     Copyright 2016 Joseph Schilz
-    Copyright 2016 Jared Miller
+    Copyright 2018 Jared Miller

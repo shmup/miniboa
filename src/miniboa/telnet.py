@@ -120,6 +120,7 @@ class TelnetClient(object):
         self.address = addr_tup[0]    # The client's remote TCP/IP address
         self.port = addr_tup[1]    # The client's remote port
         self.terminal_type = 'ANSI'    # set via request_terminal_type()
+        self.encoding = 'cp1252'
         self.use_ansi = True
         self.columns = 80
         self.rows = 24
@@ -267,7 +268,7 @@ class TelnetClient(object):
                     sent = self.sock.send(self.send_buffer)
                 else:
                     # convert to ansi before sending
-                    sent = self.sock.send(bytes(self.send_buffer, "utf-8"))
+                    sent = self.sock.send(bytes(self.send_buffer, self.encoding))
             except socket.error as err:
                 LOG.error("SEND error '{}' from {}".format(
                     err, self.addrport()))
@@ -287,7 +288,7 @@ class TelnetClient(object):
                 data = self.sock.recv(2048)
             else:
                 # Encode recieved bytes in ansi
-                data = str(self.sock.recv(2048), "utf-8")
+                data = str(self.sock.recv(2048), self.encoding)
         except socket.error as err:
             LOG.error("RECIEVE socket error '{}' from {}".format(
                 err, self.addrport()))
