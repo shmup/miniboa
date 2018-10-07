@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .async import TelnetServer
+from .mbasync import TelnetServer
 
 __version__ = "1.0.7"
 
