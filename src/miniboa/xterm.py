@@ -76,7 +76,7 @@ _ANSI_CODES = (
     ('^4', '\x1b[44m'),    # blue background
     ('^5', '\x1b[45m'),    # magenta background
     ('^6', '\x1b[46m'),    # cyan background
-    ('^d', '\x1b[39m'),    # default (should be white on black)
+    ('^d', '\x1b[39;49m'), # default (should be white on black)
     ('^I', '\x1b[7m'),    # inverse text on
     ('^i', '\x1b[27m'),    # inverse text off
     ('^~', '\x1b[0m'),    # reset all
