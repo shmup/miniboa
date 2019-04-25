@@ -331,7 +331,7 @@ class TelnetClient(object):
 
     def _echo_byte(self, byte):
         """
-        Echo a character back to the client and convert LF into CR\LF.
+        Echo a character back to the client and convert LF into CRLF.
         """
         if byte == '\n':
             self.send_buffer += '\r'
