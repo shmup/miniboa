@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .mbasync import TelnetServer
 
-__version__ = "1.0.7"
+__version__ = "1.0.8"
 
 __title__ = "miniboa"
 __description__ = "Asynchronous, single-threaded, poll-based Telnet server"
