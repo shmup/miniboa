@@ -253,7 +253,7 @@ class TelnetClient(object):
     def request_terminal_type(self):
         """
         Begins the Telnet negotiations to request the terminal type from
-        the client.  See RFC 779.
+        the client.  See RFC 884.
         """
         self._iac_do(TTYPE)
         self._note_reply_pending(TTYPE, True)
