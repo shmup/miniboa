@@ -49,7 +49,8 @@ class TelnetServer(object):
                  max_connections=MAX_CONNECTIONS,
                  timeout=0.05,
                  client_class=None,
-                 socket_family=None):
+                 socket_family=None,
+                 encoding='cp1252'):
         """
         Create a new Telnet Server.
 
@@ -92,6 +93,7 @@ class TelnetServer(object):
         self.max_connections = min(max_connections, MAX_CONNECTIONS)
         self.timeout = timeout
         self.client_class = client_class or TelnetClient
+        self.encoding = encoding
 
         if socket_family is None:
             socket_family = socket.AF_INET
@@ -191,7 +193,7 @@ class TelnetServer(object):
                     continue
 
                 # Create the client instance
-                new_client = self.client_class(sock, addr_tup)
+                new_client = self.client_class(sock, addr_tup, encoding=self.encoding)
 
                 # Add the connection to our dictionary and call handler
                 self.clients[new_client.fileno] = new_client

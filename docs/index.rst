@@ -54,6 +54,7 @@ Initialization arguments for TelnetServer are:
 - **on_connect** - this is the handler function that is called by the server when a new connection is made. It will be passed the Client object of the new user. The default is a placeholder function that greets the visitor and prints their connection info to stdout.
 - **on_disconnect** - this is the hander function that is called by the server when connection is lost. It will be passed the Client object of the lost user. The default is a placeholder function that prints the lost connection info to stdout.
 - **timeout** - length of time to wait for user input during each poll(). Default is 5 milliseconds.
+- **encoding** - optional encoding type, such as 'utf-8'. Default is 'cp1252' for historical purposes.
 
 The follow Server Properties can be read from:
 
@@ -93,7 +94,7 @@ Here's a simple example with custom on_connect() and on_disconnect() handlers:
         """Example on_disconnect handler."""
         CLIENTS.remove(client)
 
-    server = TelnetServer()
+    server = TelnetServer(encoding='utf-8')
     server.on_connect=my_on_connect
     server.on_disconnect=my_on_disconnect
 

@@ -1,32 +1,25 @@
 import sys
 import socket
-from miniboa import TelnetServer
 
-PYTHON_2 = sys.version_info < (3,)
-CLIENTS = []
+PYTHON_2 = sys.version_info < (3, )
 
 
-def test_telnet_server():
+class TestTelnetServer:
 
-    server = TelnetServer(
-        port=7777,
-        address='',
-        on_connect=lambda x: CLIENTS.append(x),
-        timeout=.05)
+    def test_telnet_server(self, server, clients):
+        client = socket.socket()
+        client.connect(('127.0.0.1', 7777))
+        server.poll()
 
-    client = socket.socket()
-    client.connect(('127.0.0.1', 7777))
-    server.poll()
+        # test that we have one connected client
+        assert len(clients) == 1
 
-    # test that we have one connected client
-    assert len(CLIENTS) == 1
+        clients[len(clients) - 1].send("test")
+        server.poll()
+        data = client.recv(4)
 
-    CLIENTS[0].send("test")
-    server.poll()
-    data = client.recv(4)
-
-    # test that we received the correct data
-    if PYTHON_2:
-        assert data == "test"
-    else:
-        assert data.decode("utf-8") == "test"
+        # test that we received the correct data
+        if PYTHON_2:
+            assert data == "test"
+        else:
+            assert data.decode("utf-8") == "test"
