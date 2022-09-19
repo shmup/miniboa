@@ -112,7 +112,7 @@ class TelnetClient(object):
     Second argument is the tuple (ip address, port number).
     """
 
-    def __init__(self, sock, addr_tup):
+    def __init__(self, sock, addr_tup, encoding):
         self.protocol = 'telnet'
         self.active = True    # Turns False when the connection is lost
         self.sock = sock    # The connection's socket
@@ -120,7 +120,7 @@ class TelnetClient(object):
         self.address = addr_tup[0]    # The client's remote TCP/IP address
         self.port = addr_tup[1]    # The client's remote port
         self.terminal_type = 'ANSI'    # set via request_terminal_type()
-        self.encoding = 'cp1252'
+        self.encoding = encoding
         self.use_ansi = True
         self.columns = 80
         self.rows = 24

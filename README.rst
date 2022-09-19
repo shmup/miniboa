@@ -8,7 +8,7 @@ Miniboa: a simple Telnet server
 
 .. image:: https://img.shields.io/pypi/v/miniboa.svg
    :target: https://pypi.python.org/pypi/miniboa
-   :alt: downloads 
+   :alt: downloads
 
 -----
 What?
@@ -64,7 +64,8 @@ But you probably want to do something with the connecting/disconnecting clients:
         port=3333,
         address='',
         on_connect=on_connect,
-        on_disconnect=on_disconnect)
+        on_disconnect=on_disconnect
+        encoding='utf-8')
 
     while True:
         server.poll()
