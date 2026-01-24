@@ -3,6 +3,7 @@
 Manage one Telnet client connected via a TCP/IP socket.
 """
 
+import codecs
 import logging
 import socket
 import time
@@ -120,7 +121,8 @@ class TelnetClient(object):
         self.address = addr_tup[0]    # The client's remote TCP/IP address
         self.port = addr_tup[1]    # The client's remote port
         self.terminal_type = 'ANSI'    # set via request_terminal_type()
-        self.encoding = encoding
+        self._encoding = encoding
+        self._decoder = codecs.getincrementaldecoder(encoding)('replace')
         self.use_ansi = True
         self.columns = 80
         self.rows = 24
@@ -142,6 +144,21 @@ class TelnetClient(object):
         self.telnet_echo = False    # Echo input back to the client?
         self.telnet_echo_password = False    # Echo back '*' for passwords?
         self.telnet_sb_buffer = ''    # Buffer for sub-negotiations
+
+    @property
+    def encoding(self):
+        """Return the current character encoding."""
+        return self._encoding
+
+    @encoding.setter
+    def encoding(self, value):
+        """
+        Set the character encoding and reinitialize the incremental decoder.
+
+        :param value: The encoding name (e.g., 'utf-8', 'cp1252').
+        """
+        self._encoding = value
+        self._decoder = codecs.getincrementaldecoder(value)('replace')
 
     def get_command(self):
         """
@@ -287,8 +304,7 @@ class TelnetClient(object):
             if PYTHON_2:
                 data = self.sock.recv(2048)
             else:
-                # Encode recieved bytes in ansi
-                data = str(self.sock.recv(2048), self.encoding)
+                data = self._decoder.decode(self.sock.recv(2048))
         except socket.error as err:
             LOG.error("RECIEVE socket error '{}' from {}".format(
                 err, self.addrport()))
